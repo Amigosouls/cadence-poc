@@ -1,54 +1,161 @@
-import { Component } from '@angular/core';
-import { Designer, Definition, ToolboxConfiguration, StepsConfiguration, ValidatorConfiguration, Properties, RootEditorContext, Step, StepEditorContext } from 'sequential-workflow-designer';
+import { Component, OnInit } from '@angular/core';
+import {
+	Definition,
+	Designer,
+	RootEditorContext,
+	Properties,
+	Uid,
+	Step,
+	StepEditorContext,
+	StepsConfiguration,
+	ToolboxConfiguration,
+	ValidatorConfiguration,
+	BranchedStep
+} from 'sequential-workflow-designer';
+
+function createJob(): Step {
+	return {
+		id: Uid.next(),
+		componentType: 'task',
+		name: 'Job',
+		type: 'job',
+		properties: { velocity: 0 }
+	};
+}
+
+function createIf(): BranchedStep {
+	return {
+		id: Uid.next(),
+		componentType: 'switch',
+		name: 'If',
+		type: 'if',
+		properties: { velocity: 10 },
+		branches: {
+			true: [],
+			false: []
+		}
+	};
+}
+
+function createMail(): Step {
+	return {
+		id: Uid.next(),
+		componentType: 'task',
+		name: 'Mail',
+		type: 'Mail',
+		properties: { velocity: 0 }
+	};
+}
+
+function createDefinition(): Definition {
+	return {
+		properties: {
+			velocity: 0
+		},
+		sequence: [createJob(), createIf(),createMail()]
+	};
+}
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+	selector: 'app-root',
+	templateUrl: './app.component.html'
 })
-export class AppComponent {
-  title = 'cadence-poc';
-  private designer?: Designer;
-  public definition: Definition = { /* ... */ };
-  public toolboxConfiguration: ToolboxConfiguration = { /* ... */ };
-  public stepsConfiguration: StepsConfiguration = { /* ... */ };
-  public validatorConfiguration: ValidatorConfiguration = { /* ... */ };
+export class AppComponent implements OnInit {
+	private designer?: Designer;
 
-  public onDesignerReady(designer: Designer) {
-    this.designer = designer;
-  }
+	public definition: Definition = createDefinition();
+	public definitionJSON?: string;
+	public selectedStepId: string | null = null;
+	public isReadonly = false;
+	public isToolboxCollapsed = false;
+	public isEditorCollapsed = false;
+	public isValid?: boolean;
 
-  public onDefinitionChanged(definition: Definition) {
-    this.definition = definition;
-  }
+	public readonly toolboxConfiguration: ToolboxConfiguration = {
+		groups: [
+			{
+				name: 'Steps',
+				steps: [createJob(), createIf(),createMail()],
+			}
+		]
+	};
+	public readonly stepsConfiguration: StepsConfiguration = {
+		iconUrlProvider: () => './assets/angular-icon.svg'
+	};
+	public readonly validatorConfiguration: ValidatorConfiguration = {
+		step: (step: Step) => !!step.name && Number(step.properties['velocity']) >= 0,
+		root: (definition: Definition) => Number(definition.properties['velocity']) >= 0
+	};
 
-  public onSelectedStepIdChanged(stepId: string | null) {
-    // ...
-  }
+	public ngOnInit() {
+		this.updateDefinitionJSON();
+	}
 
-  public updateName(step: Step, event: Event, context: StepEditorContext) {
-    step.name = (event.target as HTMLInputElement).value;
-    context.notifyNameChanged();
-  }
+	public onDesignerReady(designer: Designer) {
+		this.designer = designer;
+		this.updateIsValid();
+		console.log('designer ready', this.designer);
+	}
 
-  public updateProperty(properties: Properties, name: string, event: Event, context: RootEditorContext | StepEditorContext) {
-    properties[name] = (event.target as HTMLInputElement).value;
-    context.notifyPropertiesChanged();
-  }
+	public onDefinitionChanged(definition: Definition) {
+		this.definition = definition;
+		this.updateIsValid();
+		this.updateDefinitionJSON();
+		console.log('definition has changed');
+	}
 
+	public onSelectedStepIdChanged(stepId: string | null) {
+		this.selectedStepId = stepId;
+	}
 
+	public onIsToolboxCollapsedChanged(isCollapsed: boolean) {
+		this.isToolboxCollapsed = isCollapsed;
+	}
+
+	public onIsEditorCollapsedChanged(isCollapsed: boolean) {
+		this.isEditorCollapsed = isCollapsed;
+	}
+
+	public updateName(step: Step, event: Event, context: StepEditorContext) {
+		step.name = (event.target as HTMLInputElement).value;
+		context.notifyNameChanged();
+	}
+
+	public updateProperty(properties: Properties, name: string, event: Event, context: RootEditorContext | StepEditorContext) {
+		properties[name] = (event.target as HTMLInputElement).value;
+		context.notifyPropertiesChanged();
+	}
+
+	public reloadDefinitionClicked() {
+		this.definition = createDefinition();
+		this.updateDefinitionJSON();
+	}
+
+	public toggleReadonlyClicked() {
+		this.isReadonly = !this.isReadonly;
+	}
+
+	public toggleSelectedStepClicked() {
+		if (this.selectedStepId) {
+			this.selectedStepId = null;
+		} else if (this.definition.sequence.length > 0) {
+			this.selectedStepId = this.definition.sequence[0].id;
+		}
+	}
+
+	public toggleToolboxClicked() {
+		this.isToolboxCollapsed = !this.isToolboxCollapsed;
+	}
+
+	public toggleEditorClicked() {
+		this.isEditorCollapsed = !this.isEditorCollapsed;
+	}
+
+	private updateDefinitionJSON() {
+		this.definitionJSON = JSON.stringify(this.definition, null, 2);
+	}
+
+	private updateIsValid() {
+		this.isValid = this.designer?.isValid();
+	}
 }
-interface RootEditorWrapper {
-  definition: Definition;
-  context: RootEditorContext;
-  isReadonly: boolean;
-}
-
-interface StepEditorWrapper {
-  step: Step;
-  definition: Definition;
-  context: StepEditorContext;
-  isReadonly: boolean;
-}
-
-
