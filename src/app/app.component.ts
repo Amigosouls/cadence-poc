@@ -1,161 +1,197 @@
 import { Component, OnInit } from '@angular/core';
 import {
-	Definition,
-	Designer,
-	RootEditorContext,
-	Properties,
-	Uid,
-	Step,
-	StepEditorContext,
-	StepsConfiguration,
-	ToolboxConfiguration,
-	ValidatorConfiguration,
-	BranchedStep
+  Definition,
+  Designer,
+  RootEditorContext,
+  Properties,
+  Uid,
+  Step,
+  StepEditorContext,
+  StepsConfiguration,
+  ToolboxConfiguration,
+  ValidatorConfiguration,
+  BranchedStep,
 } from 'sequential-workflow-designer';
 
 function createJob(): Step {
-	return {
-		id: Uid.next(),
-		componentType: 'task',
-		name: 'Job',
-		type: 'job',
-		properties: { velocity: 0 }
-	};
+  return {
+    id: Uid.next(),
+    componentType: 'task',
+    name: 'Job',
+    type: 'job',
+    properties: { velocity: 0 },
+  };
 }
 
-function createIf(): BranchedStep {
-	return {
-		id: Uid.next(),
-		componentType: 'switch',
-		name: 'If',
-		type: 'if',
-		properties: { velocity: 10 },
-		branches: {
-			true: [],
-			false: []
-		}
-	};
-}
+// function createIf(): BranchedStep {
+//   return {
+//     id: Uid.next(),
+//     componentType: 'switch',
+//     name: 'If',
+//     type: 'if',
+//     properties: { velocity: 10 },
+//     branches: {
+//       true: [],
+//       false: [],
+//     },
+//   };
+// }
 
 function createMail(): Step {
-	return {
-		id: Uid.next(),
-		componentType: 'task',
-		name: 'Mail',
-		type: 'Mail',
-		properties: { velocity: 0 }
-	};
+  return {
+    id: Uid.next(),
+    componentType: 'task',
+    name: 'Mail',
+    type: 'Mail',
+    properties: { velocity: 0 },
+  };
 }
 
 function createDefinition(): Definition {
-	return {
-		properties: {
-			velocity: 0
-		},
-		sequence: [createJob(), createIf(),createMail()]
-	};
+  return {
+    properties: {
+      velocity: 0,
+    },
+    sequence: [createJob(), createMail()],
+  };
 }
 
 @Component({
-	selector: 'app-root',
-	templateUrl: './app.component.html'
+  selector: 'app-root',
+  templateUrl: './app.component.html',
 })
 export class AppComponent implements OnInit {
-	private designer?: Designer;
+  toggle: boolean = false;
 
-	public definition: Definition = createDefinition();
-	public definitionJSON?: string;
-	public selectedStepId: string | null = null;
-	public isReadonly = false;
-	public isToolboxCollapsed = false;
-	public isEditorCollapsed = false;
-	public isValid?: boolean;
+  private designer?: Designer;
 
-	public readonly toolboxConfiguration: ToolboxConfiguration = {
-		groups: [
-			{
-				name: 'Steps',
-				steps: [createJob(), createIf(),createMail()],
-			}
-		]
-	};
-	public readonly stepsConfiguration: StepsConfiguration = {
-		iconUrlProvider: () => './assets/angular-icon.svg'
-	};
-	public readonly validatorConfiguration: ValidatorConfiguration = {
-		step: (step: Step) => !!step.name && Number(step.properties['velocity']) >= 0,
-		root: (definition: Definition) => Number(definition.properties['velocity']) >= 0
-	};
+  public definition: Definition = createDefinition();
+  public definitionJSON?: string;
+  public selectedStepId: string | null = null;
+  public isReadonly = false;
+  public isToolboxCollapsed = false;
+  public isEditorCollapsed = false;
+  public isValid?: boolean;
 
-	public ngOnInit() {
-		this.updateDefinitionJSON();
-	}
+  public readonly toolboxConfiguration: ToolboxConfiguration = {
+    groups: [
+      {
+        name: 'Basic',
+        steps: [createJob()],
+      },
+      {
+        name: 'Advance',
+        steps: [createMail()],
+      },
+    ],
+  };
+  public readonly stepsConfiguration: StepsConfiguration = {
+    iconUrlProvider: () => './assets/angular-icon.svg',
+  };
+  public readonly validatorConfiguration: ValidatorConfiguration = {
+    step: (step: Step) =>
+      !!step.name && Number(step.properties['velocity']) >= 0,
+    root: (definition: Definition) =>
+      Number(definition.properties['velocity']) >= 0,
+  };
 
-	public onDesignerReady(designer: Designer) {
-		this.designer = designer;
-		this.updateIsValid();
-		console.log('designer ready', this.designer);
-	}
+  public ngOnInit() {
+    this.updateDefinitionJSON();
+  }
 
-	public onDefinitionChanged(definition: Definition) {
-		this.definition = definition;
-		this.updateIsValid();
-		this.updateDefinitionJSON();
-		console.log('definition has changed');
-	}
+  public onDesignerReady(designer: Designer) {
+    this.designer = designer;
+    this.updateIsValid();
+    console.log('designer ready', this.designer);
+  }
 
-	public onSelectedStepIdChanged(stepId: string | null) {
-		this.selectedStepId = stepId;
-	}
+  public onDefinitionChanged(definition: Definition) {
+    this.definition = definition;
+    this.updateIsValid();
+    this.updateDefinitionJSON();
+    console.log('definition has changed');
+  }
 
-	public onIsToolboxCollapsedChanged(isCollapsed: boolean) {
-		this.isToolboxCollapsed = isCollapsed;
-	}
+  public step: Step | null = null;
+  public onSelectedStepIdChanged(stepId: string | null) {
+    this.selectedStepId = stepId;
+    console.log(this.selectedStepId);
+    this.definitionJSON = JSON.stringify(this.definition, null, 2);
+    console.log(this.definitionJSON);
+    const length = this.definition.sequence.length.valueOf();
+    console.log(this.definition.sequence.length.valueOf());
+    for (let i = 0; i < length; i++) {
+      if (this.definition.sequence[i].id === this.selectedStepId) {
+        if (this.definition.sequence[i].name === 'Mail') {
+          this.toggle = true;
+        } else if (this.definition.sequence[i].name === 'Job') {
+          this.toggle = false;
+        }
+      }
+    }
+  }
 
-	public onIsEditorCollapsedChanged(isCollapsed: boolean) {
-		this.isEditorCollapsed = isCollapsed;
-	}
+  public onIsToolboxCollapsedChanged(isCollapsed: boolean) {
+    this.isToolboxCollapsed = isCollapsed;
+  }
 
-	public updateName(step: Step, event: Event, context: StepEditorContext) {
-		step.name = (event.target as HTMLInputElement).value;
-		context.notifyNameChanged();
-	}
+  public onIsEditorCollapsedChanged(isCollapsed: boolean) {
+    this.isEditorCollapsed = isCollapsed;
+  }
 
-	public updateProperty(properties: Properties, name: string, event: Event, context: RootEditorContext | StepEditorContext) {
-		properties[name] = (event.target as HTMLInputElement).value;
-		context.notifyPropertiesChanged();
-	}
+  public updateName(step: Step, event: Event, context: StepEditorContext) {
+    step.name = (event.target as HTMLInputElement).value;
+    context.notifyNameChanged();
+  }
 
-	public reloadDefinitionClicked() {
-		this.definition = createDefinition();
-		this.updateDefinitionJSON();
-	}
+  public updateProperty(
+    properties: Properties,
+    name: string,
+    event: Event,
+    context: RootEditorContext | StepEditorContext
+  ) {
+    properties[name] = (event.target as HTMLInputElement).value;
+    context.notifyPropertiesChanged();
+  }
 
-	public toggleReadonlyClicked() {
-		this.isReadonly = !this.isReadonly;
-	}
+  public reloadDefinitionClicked() {
+    this.definition = createDefinition();
+    this.updateDefinitionJSON();
+  }
 
-	public toggleSelectedStepClicked() {
-		if (this.selectedStepId) {
-			this.selectedStepId = null;
-		} else if (this.definition.sequence.length > 0) {
-			this.selectedStepId = this.definition.sequence[0].id;
-		}
-	}
+  public toggleReadonlyClicked() {
+    this.isReadonly = !this.isReadonly;
+  }
 
-	public toggleToolboxClicked() {
-		this.isToolboxCollapsed = !this.isToolboxCollapsed;
-	}
+  public toggleSelectedStepClicked() {
+    if (this.selectedStepId) {
+      this.selectedStepId = null;
+    } else if (this.definition.sequence.length > 0) {
+      this.selectedStepId = this.definition.sequence[0].id;
+    }
+  }
 
-	public toggleEditorClicked() {
-		this.isEditorCollapsed = !this.isEditorCollapsed;
-	}
+  public toggleToolboxClicked() {
+    this.isToolboxCollapsed = !this.isToolboxCollapsed;
+  }
 
-	private updateDefinitionJSON() {
-		this.definitionJSON = JSON.stringify(this.definition, null, 2);
-	}
+  public toggleEditorClicked() {
+    this.isEditorCollapsed = !this.isEditorCollapsed;
+  }
 
-	private updateIsValid() {
-		this.isValid = this.designer?.isValid();
-	}
+  private updateDefinitionJSON() {
+    this.definitionJSON = JSON.stringify(this.definition, null, 2);
+  }
+
+  private updateIsValid() {
+    this.isValid = this.designer?.isValid();
+  }
+
+  public toggleSelectedStepClicked1() {
+    if (this.selectedStepId) {
+      this.selectedStepId = null;
+    } else if (this.definition.sequence.length > 0) {
+      this.selectedStepId = this.definition.sequence[0].id;
+    }
+  }
 }
