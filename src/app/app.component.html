@@ -24,17 +24,17 @@
 <ng-template #rootEditor let-editor>
   <h2>Root Editor</h2>
 
-  <h3>Velocity</h3>
+  <h3>Test Data</h3>
   <mat-form-field class="full-width">
     <input
       matInput
       type="number"
-      [value]="editor.definition.properties.velocity"
+      [value]="editor.definition.properties.testData"
       [readonly]="editor.isReadonly"
       (input)="
         updateProperty(
           editor.definition.properties,
-          'velocity',
+          'testData',
           $event,
           editor.context
         )
@@ -48,30 +48,36 @@
     <h2>Mail Editor</h2>
 
     <mat-tab-group>
-      <mat-tab label="Basic">
-        <h3>Name</h3>
+      <mat-tab label="Details">
+        <h3>Mail</h3>
+        <h5>To Mail</h5>
         <mat-form-field class="full-width">
           <input
             matInput
             type="text"
-            [value]="editor.step.name"
-            [readonly]="editor.isReadonly"
-            (input)="updateName(editor.step, $event, editor.context)"
-          />
-        </mat-form-field>
-      </mat-tab>
-      <mat-tab label="Details">
-        <h3>Mail</h3>
-        <mat-form-field class="full-width">
-          <input
-            matInput
-            type="number"
-            [value]="editor.step.properties.velocity"
+            [value]="editor.step.properties.toMail"
             [readonly]="editor.isReadonly"
             (input)="
               updateProperty(
                 editor.step.properties,
-                'velocity',
+                'toMail',
+                $event,
+                editor.context
+              )
+            "
+          />
+        </mat-form-field>
+        <h5>Scheduled Time</h5>
+        <mat-form-field class="full-width">
+          <input
+            matInput
+            type="text"
+            [value]="editor.step.properties.scheduled"
+            [readonly]="editor.isReadonly"
+            (input)="
+              updateProperty(
+                editor.step.properties,
+                'scheduled',
                 $event,
                 editor.context
               )
@@ -83,32 +89,19 @@
   </div>
   <div *ngIf="!toggle">
     <h2>Job Editor</h2>
-
     <mat-tab-group>
-      <mat-tab label="Basic">
-        <h3>Name</h3>
-        <mat-form-field class="full-width">
-          <input
-            matInput
-            type="text"
-            [value]="editor.step.name"
-            [readonly]="editor.isReadonly"
-            (input)="updateName(editor.step, $event, editor.context)"
-          />
-        </mat-form-field>
-      </mat-tab>
       <mat-tab label="Details">
         <h3>Job</h3>
         <mat-form-field class="full-width">
           <input
             matInput
             type="number"
-            [value]="editor.step.properties.velocity"
+            [value]="editor.step.properties.testData"
             [readonly]="editor.isReadonly"
             (input)="
               updateProperty(
                 editor.step.properties,
-                'velocity',
+                'testData',
                 $event,
                 editor.context
               )

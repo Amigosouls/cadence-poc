@@ -19,7 +19,7 @@ function createJob(): Step {
     componentType: 'task',
     name: 'Job',
     type: 'job',
-    properties: { velocity: 0 },
+    properties: { testData: 0 },
   };
 }
 
@@ -43,14 +43,16 @@ function createMail(): Step {
     componentType: 'task',
     name: 'Mail',
     type: 'Mail',
-    properties: { velocity: 0 },
+    properties: { toMail: '', scheduled: '' },
   };
 }
 
 function createDefinition(): Definition {
   return {
     properties: {
-      velocity: 0,
+      toMail: '',
+      scheduled: '',
+      testData: 0,
     },
     sequence: [createJob(), createMail()],
   };
@@ -90,9 +92,9 @@ export class AppComponent implements OnInit {
   };
   public readonly validatorConfiguration: ValidatorConfiguration = {
     step: (step: Step) =>
-      !!step.name && Number(step.properties['velocity']) >= 0,
+      !!step.name && Number(step.properties['testData']) >= 0,
     root: (definition: Definition) =>
-      Number(definition.properties['velocity']) >= 0,
+      Number(definition.properties['testData']) >= 0,
   };
 
   public ngOnInit() {
