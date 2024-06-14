@@ -43,18 +43,29 @@ function createMail(): Step {
     componentType: 'task',
     name: 'Mail',
     type: 'Mail',
-    properties: { toMail: '', scheduled: '' },
+    properties: { mailFrom: '', scheduledTime: '', emailTemplate:'',  },
   };
 }
+
+function createCall(): Step {
+	return {
+	  id: Uid.next(),
+	  componentType: 'task',
+	  name: 'Call',
+	  type: 'job',
+	  properties: { toMail: '', scheduled: '' },
+	};
+  }
 
 function createDefinition(): Definition {
   return {
     properties: {
-      toMail: '',
-      scheduled: '',
+      mailFrom: '',
+      scheduledTime: '',
+      emailTemplate:'',
       testData: 0,
     },
-    sequence: [createJob(), createMail()],
+    sequence: [createJob(), createMail(), createCall()],
   };
 }
 
@@ -74,7 +85,8 @@ export class AppComponent implements OnInit {
   public isToolboxCollapsed = false;
   public isEditorCollapsed = false;
   public isValid?: boolean;
-
+  public visible:boolean = false;
+  templates:any=[{name:'First Follow Up', value:0},{name:'Second Follow Up', value:0}]
   public readonly toolboxConfiguration: ToolboxConfiguration = {
     groups: [
       {
@@ -83,7 +95,7 @@ export class AppComponent implements OnInit {
       },
       {
         name: 'Advance',
-        steps: [createMail()],
+        steps: [createMail(), createCall()],
       },
     ],
   };
@@ -111,26 +123,27 @@ export class AppComponent implements OnInit {
     this.definition = definition;
     this.updateIsValid();
     this.updateDefinitionJSON();
-    console.log('definition has changed');
+	
   }
 
   public step: Step | null = null;
   public onSelectedStepIdChanged(stepId: string | null) {
     this.selectedStepId = stepId;
-    console.log(this.selectedStepId);
+   // console.log(this.selectedStepId);
     this.definitionJSON = JSON.stringify(this.definition, null, 2);
-    console.log(this.definitionJSON);
+   // console.log(this.definitionJSON);
     const length = this.definition.sequence.length.valueOf();
-    console.log(this.definition.sequence.length.valueOf());
-    for (let i = 0; i < length; i++) {
-      if (this.definition.sequence[i].id === this.selectedStepId) {
-        if (this.definition.sequence[i].name === 'Mail') {
-          this.toggle = true;
-        } else if (this.definition.sequence[i].name === 'Job') {
-          this.toggle = false;
-        }
-      }
-    }
+    //console.log(this.definition.sequence.length.valueOf());
+	this.visible = true;
+    // for (let i = 0; i < length; i++) {
+    //   if (this.definition.sequence[i].id === this.selectedStepId) {
+    //     if (this.definition.sequence[i].name === 'Mail') {
+    //       this.toggle = true;
+    //     } else if (this.definition.sequence[i].name === 'Job') {
+    //       this.toggle = false;
+    //     }
+    //   }
+    // }
   }
 
   public onIsToolboxCollapsedChanged(isCollapsed: boolean) {

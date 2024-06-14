@@ -9,6 +9,11 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { CalendarModule } from 'primeng/calendar';
+import { FormsModule } from '@angular/forms';
+import { DropdownModule } from 'primeng/dropdown';
 
 @NgModule({
 	declarations: [AppComponent],
@@ -20,7 +25,12 @@ import { MatButtonModule } from '@angular/material/button';
 		NoopAnimationsModule,
 		MatTabsModule,
 		MatInputModule,
-		MatButtonModule
+		MatButtonModule,
+		DialogModule,
+		InputTextModule,
+		CalendarModule,
+		FormsModule,
+		DropdownModule
 	],
 	providers: [],
 	bootstrap: [AppComponent]
