@@ -14,6 +14,12 @@ import { InputTextModule } from 'primeng/inputtext';
 import { CalendarModule } from 'primeng/calendar';
 import { FormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
+import { TimelineModule } from 'primeng/timeline';
+import { CardModule } from 'primeng/card';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { TableModule } from 'primeng/table';
+import { DialogService } from 'primeng/dynamicdialog';
+import { MessageService } from 'primeng/api';
 
 @NgModule({
 	declarations: [AppComponent],
@@ -30,9 +36,13 @@ import { DropdownModule } from 'primeng/dropdown';
 		InputTextModule,
 		CalendarModule,
 		FormsModule,
-		DropdownModule
+		DropdownModule,
+		TimelineModule,
+		CardModule,
+		OverlayPanelModule,
+		TableModule
 	],
-	providers: [],
+	providers: [DialogService, MessageService],
 	bootstrap: [AppComponent]
 })
 export class AppModule {}

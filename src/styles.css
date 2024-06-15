@@ -1,4 +1,5 @@
 @import '/node_modules/primeflex/primeflex.css';
+@import "primeicons/primeicons.css";
 
 body,
 input,
@@ -41,3 +42,76 @@ textarea {
 	text-align: center;
 	margin: 10px;
 }
+
+.flow_chart .p-timeline.p-timeline-vertical .p-timeline-event-connector {
+    width: 1px;
+  }
+  
+  
+  .flow_chart .p-timeline-event:first-child .p-timeline-event-separator .p-timeline-event-connector {
+    background-color: #7EC607 !important;
+  }
+  
+  .flow_chart .p-timeline-event:nth-child(2) .p-timeline-event-separator .p-timeline-event-connector {
+    background-color: #7EC607 !important;
+  }
+  
+  .flow_chart .p-timeline-event:nth-child(3) .p-timeline-event-separator .p-timeline-event-connector {
+    background-color: #E9573E !important;
+  }
+  
+  
+  .flow_chart .p-timeline-event:nth-child(4) .p-timeline-event-separator .p-timeline-event-connector,.flow_chart .p-timeline-event:nth-child(5) .p-timeline-event-separator .p-timeline-event-connector {
+    background-color: #8E8F8E !important;
+  }
+  
+  .p-tabview-nav-content .p-tabview-nav .ng-star-inserted:nth-child(5) {
+    margin-left: auto !important;
+  }
+  
+  .demo_green{
+    background-color: #7EC607 !important;
+    color: #ffffff !important;
+    font-weight: bold !important;
+  }
+  
+  .demo_green span{
+    cursor: pointer !important;
+  }
+  
+  
+  .demo_red{
+    background-color: #E9573E !important;
+    color: #ffffff !important;
+    font-weight: bold !important;
+  }
+  
+  .demo_red span{
+    cursor: pointer !important;
+  }
+  
+  .demo_gray{
+    background-color: #8E8F8E !important;
+    color: #ffffff !important;
+    font-weight: bold !important;
+  }
+  
+  .demo_gray span{
+    cursor: pointer !important;
+  }
+  
+  
+  .p-overlaypanel.p-overlaypanel-flipped:before{
+    border-top-color: #e4e4e4 !important;
+  }
+
+  .sqd-theme-light .sqd-smart-editor{
+	background: transparent !important;
+	box-shadow: none !important;
+  }
+  .sqd-theme-light .sqd-smart-editor-toggle{
+	display: none !important;
+  }
+  .sqd-layout-desktop .sqd-smart-editor{
+	width: 0vw !important;
+  }
