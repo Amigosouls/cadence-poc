@@ -69,7 +69,8 @@ function createDefinition(): Definition {
       mailFrom: '',
       scheduledTime: '',
       emailTemplate: '',
-      testData: 0,
+      runBasedOn : '',
+      
     },
     sequence: [],
   };
@@ -274,12 +275,64 @@ export class AppComponent implements OnInit {
     this.ngZone.run(() => {
       this.definitionJSON = JSON.stringify(this.definition, null, 2);
       this.cdr.detectChanges();
+    })
+    this.changeStepColor();
+
+   
+  }
+
+  private changeStepColor(){
+    var elements = document.querySelectorAll('.sqd-step-task') as NodeListOf<Element>;;
+    var matchedElement:any = null;
+
+    // Loop through each element
+    elements.forEach((element:Element) => {
+        // Check if the element has the data-step-id attribute
+        if (element.hasAttribute('data-step-id')) {
+            // Get the value of the data-step-id attribute
+            var stepId = element.getAttribute('data-step-id');
+
+            // Compare the attribute value with the provided ID value
+            if (stepId === this.selectedStepId) {
+                matchedElement = element; // Found the matching element
+                return; // Exit the loop early since we found the match
+            }
+        }
     });
+
+    if (matchedElement) {
+        var rectElement = matchedElement.querySelector('rect') as HTMLElement;
+        // console.log(matchedElement)
+        // console.log(elements)
+        // console.log(rectElement)
+        // Check if the <rect> element was found
+        if (rectElement) {
+            // Change the style fill to aqua
+            console.log(this.selectedStepId)
+            console.log(rectElement)
+            if(this.isValid){
+              rectElement.style.fill = 'green';
+            } // Use setAttribute to change SVG fill
+            else{
+              rectElement.style.fill = 'red';
+            }
+        }
+    }
   }
 
   private updateIsValid() {
     this.isValid = this.designer?.isValid();
+   
+}
+
+  public toggleSelectedStepClicked1() {
+    if (this.selectedStepId) {
+      this.selectedStepId = null;
+    } else if (this.definition.sequence.length > 0) {
+      this.selectedStepId = this.definition.sequence[0].id;
+    }
   }
+
 
   closeModal() {
     this.mailcontent = false;

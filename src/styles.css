@@ -59,9 +59,9 @@ textarea {
   .flow_chart .p-timeline-event:nth-child(3) .p-timeline-event-separator .p-timeline-event-connector {
     background-color: #E9573E !important;
   }
+   
   
-  
-  .flow_chart .p-timeline-event:nth-child(4) .p-timeline-event-separator .p-timeline-event-connector,.flow_chart .p-timeline-event:nth-child(5) .p-timeline-event-separator .p-timeline-event-connector {
+   .flow_chart .p-timeline-event:nth-child(4) .p-timeline-event-separator .p-timeline-event-connector,.flow_chart .p-timeline-event:nth-child(5) .p-timeline-event-separator .p-timeline-event-connector {
     background-color: #8E8F8E !important;
   }
   
