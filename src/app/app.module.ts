@@ -20,29 +20,33 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { TableModule } from 'primeng/table';
 import { DialogService } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
+import { AngularEditorModule } from '@kolkov/angular-editor';
+import { HttpClientModule } from '@angular/common/http'
 
 @NgModule({
-	declarations: [AppComponent],
-	imports: [
-		CommonModule,
-		BrowserModule,
+  declarations: [AppComponent],
+  imports: [
+    CommonModule,
+    BrowserModule,
     BrowserAnimationsModule,
-		SequentialWorkflowDesignerModule,
-		NoopAnimationsModule,
-		MatTabsModule,
-		MatInputModule,
-		MatButtonModule,
-		DialogModule,
-		InputTextModule,
-		CalendarModule,
-		FormsModule,
-		DropdownModule,
-		TimelineModule,
-		CardModule,
-		OverlayPanelModule,
-		TableModule
-	],
-	providers: [DialogService, MessageService],
-	bootstrap: [AppComponent]
+    SequentialWorkflowDesignerModule,
+    NoopAnimationsModule,
+    MatTabsModule,
+    MatInputModule,
+    MatButtonModule,
+    DialogModule,
+    InputTextModule,
+    CalendarModule,
+    FormsModule,
+    DropdownModule,
+    TimelineModule,
+    CardModule,
+    OverlayPanelModule,
+    TableModule,
+	AngularEditorModule,
+	HttpClientModule
+  ],
+  providers: [DialogService, MessageService],
+  bootstrap: [AppComponent],
 })
 export class AppModule {}

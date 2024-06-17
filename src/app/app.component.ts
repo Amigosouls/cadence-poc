@@ -1,4 +1,6 @@
 import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
+import { AngularEditorConfig } from '@kolkov/angular-editor';
+
 import {
   Definition,
   Designer,
@@ -47,7 +49,7 @@ function createMail(): Step {
     componentType: 'task',
     name: 'Mail',
     type: 'Mail',
-    properties: { mailFrom: '', scheduledTime: '', emailTemplate: '', },
+    properties: { mailFrom: '', scheduledTime: '', emailTemplate: '' },
   };
 }
 
@@ -78,6 +80,35 @@ function createDefinition(): Definition {
   templateUrl: './app.component.html',
 })
 export class AppComponent implements OnInit {
+  htmlContent = '';
+
+  config: AngularEditorConfig = {
+    editable: true,
+    spellcheck: true,
+    height: '15rem',
+    minHeight: '5rem',
+    placeholder: 'Enter text here...',
+    translate: 'no',
+    defaultParagraphSeparator: 'p',
+    defaultFontName: 'Arial',
+    toolbarHiddenButtons: [['bold']],
+    customClasses: [
+      {
+        name: 'quote',
+        class: 'quote',
+      },
+      {
+        name: 'redText',
+        class: 'redText',
+      },
+      {
+        name: 'titleText',
+        class: 'titleText',
+        tag: 'h1',
+      },
+    ],
+  };
+
   toggle: boolean = false;
   private designer?: Designer;
   public definition: Definition = createDefinition();
@@ -89,14 +120,40 @@ export class AppComponent implements OnInit {
   public isValid?: boolean;
   public visible: boolean = false;
   mailcontent: boolean = false;
-  constructor(public dialogService: DialogService,private ngZone: NgZone,private cdr: ChangeDetectorRef, public messageService: MessageService) { }
+  cursorPosition: any;
+  constructor(
+    public dialogService: DialogService,
+    private ngZone: NgZone,
+    private cdr: ChangeDetectorRef,
+    public messageService: MessageService
+  ) {}
 
   ref: DynamicDialogRef | undefined;
-  ProductListDemo: any; 
+  ProductListDemo: any;
   showModal: boolean = false;
 
-  data = [{ scheduledDate: '05/07/23', scheduledTime: '09:30', eventDate: '05/07/23', eventTime: '06:30', event: 'Email Remainder 1 sent', isSuccess: true }, { scheduledDate: '06/12/23', scheduledTime: '11:30', eventDate: '', eventTime: '', event: 'Did Not Print Snail Mail', isSuccess: false }];
-  templates: any = [{ name: 'First Follow Up', value: 0 }, { name: 'Second Follow Up', value: 0 }]
+  data = [
+    {
+      scheduledDate: '05/07/23',
+      scheduledTime: '09:30',
+      eventDate: '05/07/23',
+      eventTime: '06:30',
+      event: 'Email Remainder 1 sent',
+      isSuccess: true,
+    },
+    {
+      scheduledDate: '06/12/23',
+      scheduledTime: '11:30',
+      eventDate: '',
+      eventTime: '',
+      event: 'Did Not Print Snail Mail',
+      isSuccess: false,
+    },
+  ];
+  templates: any = [
+    { name: 'First Follow Up', value: 0 },
+    { name: 'Second Follow Up', value: 0 },
+  ];
   public readonly toolboxConfiguration: ToolboxConfiguration = {
     groups: [
       {
@@ -110,7 +167,17 @@ export class AppComponent implements OnInit {
     ],
   };
   public readonly stepsConfiguration: StepsConfiguration = {
-    iconUrlProvider: () => null,
+    iconUrlProvider: (componentType: string, type: string) => {
+      if (componentType === 'task') {
+        switch (type) {
+          case 'Mail':
+            return './assets/mail.png';
+          case 'Call':
+            return './assets/call.jpg';
+        }
+      }
+      return './assets/angular-icon.svg';
+    },
   };
   // public readonly validatorConfiguration: ValidatorConfiguration = {
   //   step: (step: Step) =>
@@ -121,7 +188,6 @@ export class AppComponent implements OnInit {
 
   public ngOnInit() {
     this.updateDefinitionJSON();
-    
   }
 
   public onDesignerReady(designer: Designer) {
@@ -133,7 +199,7 @@ export class AppComponent implements OnInit {
     this.definition = definition;
     this.updateIsValid();
     this.updateDefinitionJSON();
-
+    console.log(this.definition.sequence);
   }
 
   public step: Step | null = null;
@@ -208,46 +274,43 @@ export class AppComponent implements OnInit {
     this.ngZone.run(() => {
       this.definitionJSON = JSON.stringify(this.definition, null, 2);
       this.cdr.detectChanges();
-    })
-   
+    });
   }
 
   private updateIsValid() {
     this.isValid = this.designer?.isValid();
   }
 
-  public toggleSelectedStepClicked1() {
-    if (this.selectedStepId) {
-      this.selectedStepId = null;
-    } else if (this.definition.sequence.length > 0) {
-      this.selectedStepId = this.definition.sequence[0].id;
-    }
-  }
-
-
   closeModal() {
     this.mailcontent = false;
   }
 
-
-
   show() {
+    console.log(this.definition.sequence.length);
     this.ref = this.dialogService.open(this.ProductListDemo, {
       header: 'Select a Product',
       width: '70%',
       contentStyle: { overflow: 'auto' },
       baseZIndex: 10000,
-      maximizable: true
+      maximizable: true,
     });
 
     this.ref.onClose.subscribe((product: any) => {
       if (product) {
-        this.messageService.add({ severity: 'info', summary: 'Product Selected', detail: product.name });
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Product Selected',
+          detail: product.name,
+        });
       }
     });
 
     this.ref.onMaximize.subscribe((value) => {
-      this.messageService.add({ severity: 'info', summary: 'Maximized', detail: `maximized: ${value.maximized}` });
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Maximized',
+        detail: `maximized: ${value.maximized}`,
+      });
     });
   }
 
@@ -316,7 +379,22 @@ export class AppComponent implements OnInit {
     // },
   ];
 
-  showFullMail(){
+  showFullMail() {}
 
+  toggleCheckbox(event: any) {
+    this.toggle = !this.toggle;
+    console.log(event.target.checked);
+  }
+
+  onDragStart(event: any, content: string) {
+    event.dataTransfer.setData('text', content);
+  }
+
+  onEditorFocus(event: any) {
+    this.cursorPosition = event.target.selectionStart;
+  }
+
+  onEditorBlur(event: any) {
+    this.cursorPosition = null;
   }
 }
