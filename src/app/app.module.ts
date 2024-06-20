@@ -21,10 +21,11 @@ import { TableModule } from 'primeng/table';
 import { DialogService } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
 import { AngularEditorModule } from '@kolkov/angular-editor';
-import { HttpClientModule } from '@angular/common/http'
+import { HttpClientModule } from '@angular/common/http';
+import { DateRollerComponent } from './date-roller/date-roller.component'
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, DateRollerComponent],
   imports: [
     CommonModule,
     BrowserModule,
