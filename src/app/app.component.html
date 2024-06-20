@@ -5,6 +5,7 @@
     [definition]="definition"
     [toolboxConfiguration]="toolboxConfiguration"
     [stepsConfiguration]="stepsConfiguration"
+    [validatorConfiguration]="validatorConfiguration"
     [controlBar]="true"
     [selectedStepId]="selectedStepId"
     [isReadonly]="isReadonly"
@@ -22,7 +23,7 @@
   >
   </sqd-designer>
 
-  <span class="w-full">
+  <!-- <span class="w-full">
     <div class="flow_chart w-full">
       <div class="card h-full w-full p-3 shadow-1">
         <div>
@@ -30,11 +31,8 @@
             <h5 class="m-0 font-semibold w-full text-gray-700">Auto Follow Up From Cadence</h5>
           </div>
         </div>
-        <hr />
-        <p-timeline
-          [value]="definition.sequence"
-          styleClass="customized-timeline mt-8"
-        >
+        <hr>
+        <p-timeline [value]="definition.sequence"  styleClass="customized-timeline mt-8">
           <ng-template pTemplate="marker" let-event>
             <span
               class="custom-marker shadow-2"
@@ -56,8 +54,8 @@
                     'fa-phone-volume': event.type === 'Call'
                   }"
                 ></i>
-                <!-- <i [ngClass]="event.icon1"></i>
-                <i [ngClass]="event.icon2"></i> -->
+                <i [ngClass]="event.icon1"></i>
+                <i [ngClass]="event.icon2"></i>
               </div>
               <div class="flex flex-column">
                 <p-card
@@ -100,7 +98,7 @@
           </ng-template>
       </p-table>
     </p-overlayPanel>
-  </span>
+  </span> -->
 </span>
 <ng-template #rootEditor let-editor>
   <!-- <h2>Root Editor</h2>
@@ -148,10 +146,28 @@
           "
         />
       </span>
+      <span class="p-float-label flex gap-2 flex-column">
+        <label>Mail To</label>
+        <input
+          pInputText
+          type="text"
+          class="p-inputtext-sm w-20rem"
+          [value]="editor.step.properties.mailTo"
+          [readonly]="editor.isReadonly"
+          (input)="
+            updateProperty(
+              editor.step.properties,
+              'mailTo',
+              $event,
+              editor.context
+            )
+          "
+        />
+      </span>
 
       <span class="flex flex-column gap-2 mt-3">
         <label for="date">Scheduled date</label>
-        <input appendTo="body" pInputText type="date" class="p-inputtext-sm w-20rem" [value]="editor.step.properties.scheduledTime"
+        <input appendTo="body" pInputText type="datetime-local" class="p-inputtext-sm w-20rem" [value]="editor.step.properties.scheduledTime"
           (input)="
             updateProperty(
               editor.step.properties,
@@ -162,8 +178,41 @@
           "
         />
       </span>
+      <div class="flex-row justify-content-evenly flex">
+        <span class="flex flex-column gap-2 mt-2">
+          <label for="">Days</label>
+          <select class="p-inputtext-sm w-20rem" pInputText optionLabel="name" [value]="editor.step.properties.runBasedOn" (input)="
+            updateProperty(
+              editor.step.properties,
+              'runBasedOn',
+              $event,
+              editor.context
+            )
+          ">
+            <option value="1">5</option>
+            <option value="2">6</option>
+            <option value="3">7</option>
+          </select>
+        </span>
+        <span class="flex flex-column gap-2 mt-2">
+          <label for="">Run Based On</label>
+          <select class="p-inputtext-sm w-20rem" pInputText optionLabel="name" [value]="editor.step.properties.runBasedOn" (input)="
+            updateProperty(
+              editor.step.properties,
+              'runBasedOn',
+              $event,
+              editor.context
+            )
+          ">
+            <option value="1">before duedate</option>
+            <option value="2">after duedate</option>
+            <option value="3">after invoicecreation</option>
+          </select>
+        </span>
+      </div>
+     
 
-      <span class="flex flex-column gap-2 mt-2">
+      <div class=" gap-2 mt-2" [ngClass]="toggle ? 'hidden ':'flex flex-column'">
         <label for="">Template</label>
         <select class="p-inputtext-sm w-20rem" pInputText optionLabel="name" [value]="editor.step.properties.emailTemplate" (input)="
           updateProperty(
@@ -176,7 +225,7 @@
           <option value="1">First Follow up</option>
           <option value="2">Second Follow up</option>
         </select>
-      </span>
+      </div>
 
       <span class="flex flex-column gap-2 mt-2">
         <div class="mb-3 form-check">

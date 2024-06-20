@@ -49,7 +49,7 @@ function createMail(): Step {
     componentType: 'task',
     name: 'Mail',
     type: 'Mail',
-    properties: { mailFrom: '', scheduledTime: '', emailTemplate: '' },
+    properties: { mailFrom: '', scheduledTime: '', emailTemplate: '',runBasedOn:'', mailTo:'' },
   };
 }
 
@@ -70,6 +70,7 @@ function createDefinition(): Definition {
       scheduledTime: '',
       emailTemplate: '',
       runBasedOn : '',
+      mailTo:'',
       
     },
     sequence: [],
@@ -152,8 +153,13 @@ export class AppComponent implements OnInit {
     },
   ];
   templates: any = [
-    { name: 'First Follow Up', value: 0 },
-    { name: 'Second Follow Up', value: 0 },
+    { name: 'First Follow Up', value: 1 },
+    { name: 'Second Follow Up', value: 2},
+  ];
+  runBasedOn: any = [
+    { name: 'before duedate', value: 1 },
+    { name: 'after duedate', value: 2 },
+    { name: 'after invoicecreation', value: 3 }
   ];
   public readonly toolboxConfiguration: ToolboxConfiguration = {
     groups: [
@@ -180,12 +186,13 @@ export class AppComponent implements OnInit {
       return './assets/angular-icon.svg';
     },
   };
-  // public readonly validatorConfiguration: ValidatorConfiguration = {
-  //   step: (step: Step) =>
-  //     !!step.name && Number(step.properties['testData']) >= 0,
-  //   root: (definition: Definition) =>
-  //     Number(definition.properties['testData']) >= 0,
-  // };
+  
+  public readonly validatorConfiguration: ValidatorConfiguration = {
+    step: (step: Step) =>
+      !!step.name && (/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(step.properties['mailFrom'] as string)) as boolean,
+    root: (definition: Definition) =>
+      definition.properties['mailFrom'] == '' && definition.properties['scheduledTime'] == '' && definition.properties['emailTemplate'] == ''
+  };
 
   public ngOnInit() {
     this.updateDefinitionJSON();
@@ -200,7 +207,6 @@ export class AppComponent implements OnInit {
     this.definition = definition;
     this.updateIsValid();
     this.updateDefinitionJSON();
-    console.log(this.definition.sequence);
   }
 
   public step: Step | null = null;
@@ -277,8 +283,6 @@ export class AppComponent implements OnInit {
       this.cdr.detectChanges();
     })
     this.changeStepColor();
-
-   
   }
 
   private changeStepColor(){
@@ -286,7 +290,7 @@ export class AppComponent implements OnInit {
     var matchedElement:any = null;
 
     // Loop through each element
-    elements.forEach((element:Element) => {
+    elements.forEach((element:any) => {
         // Check if the element has the data-step-id attribute
         if (element.hasAttribute('data-step-id')) {
             // Get the value of the data-step-id attribute
@@ -302,14 +306,8 @@ export class AppComponent implements OnInit {
 
     if (matchedElement) {
         var rectElement = matchedElement.querySelector('rect') as HTMLElement;
-        // console.log(matchedElement)
-        // console.log(elements)
-        // console.log(rectElement)
-        // Check if the <rect> element was found
         if (rectElement) {
             // Change the style fill to aqua
-            console.log(this.selectedStepId)
-            console.log(rectElement)
             if(this.isValid){
               rectElement.style.fill = 'green';
             } // Use setAttribute to change SVG fill

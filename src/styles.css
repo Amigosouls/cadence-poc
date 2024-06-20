@@ -31,7 +31,7 @@ textarea {
 }
 
 .sqd-designer-angular {
-	width: 60vw;
+	width: 100vw;
 	height: 80vh;
 }
 .sqd-editor {
@@ -114,4 +114,8 @@ textarea {
   }
   .sqd-layout-desktop .sqd-smart-editor{
 	width: 0vw !important;
+  }
+
+  .sqd-theme-light .sqd-step-task .sqd-step-task-rect{
+    fill: red;
   }
