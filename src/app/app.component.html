@@ -129,7 +129,7 @@
       (onHide)="toggleSelectedStepClicked()"
     >
       <span class="p-float-label flex gap-2 flex-column">
-        <label>Mail From</label>
+        <label>Email From</label>
         <input
           pInputText
           type="text"
@@ -147,7 +147,7 @@
         />
       </span>
       <span class="p-float-label flex gap-2 flex-column">
-        <label>Mail To</label>
+        <label>Email To</label>
         <input
           pInputText
           type="text"
@@ -166,8 +166,8 @@
       </span>
 
       <span class="flex flex-column gap-2 mt-3">
-        <label for="date">Scheduled date</label>
-        <input appendTo="body" pInputText type="datetime-local" class="p-inputtext-sm w-20rem" [value]="editor.step.properties.scheduledTime"
+        <label for="date">Email trigger schedule</label>
+        <input appendTo="body" pInputText type="text" class="p-inputtext-sm w-20rem" [value]="editor.step.properties.scheduledTime"
           (input)="
             updateProperty(
               editor.step.properties,
@@ -178,38 +178,7 @@
           "
         />
       </span>
-      <div class="flex-row justify-content-evenly flex">
-        <span class="flex flex-column gap-2 mt-2">
-          <label for="">Days</label>
-          <select class="p-inputtext-sm w-20rem" pInputText optionLabel="name" [value]="editor.step.properties.runBasedOn" (input)="
-            updateProperty(
-              editor.step.properties,
-              'runBasedOn',
-              $event,
-              editor.context
-            )
-          ">
-            <option value="1">5</option>
-            <option value="2">6</option>
-            <option value="3">7</option>
-          </select>
-        </span>
-        <span class="flex flex-column gap-2 mt-2">
-          <label for="">Run Based On</label>
-          <select class="p-inputtext-sm w-20rem" pInputText optionLabel="name" [value]="editor.step.properties.runBasedOn" (input)="
-            updateProperty(
-              editor.step.properties,
-              'runBasedOn',
-              $event,
-              editor.context
-            )
-          ">
-            <option value="1">before duedate</option>
-            <option value="2">after duedate</option>
-            <option value="3">after invoicecreation</option>
-          </select>
-        </span>
-      </div>
+
      
 
       <div class=" gap-2 mt-2" [ngClass]="toggle ? 'hidden ':'flex flex-column'">
@@ -350,5 +319,11 @@
     }}</textarea>
   </mat-form-field>
 </div>
+
+<div class="w-20rem">
+    <ng-scroll-picker [data]="data" (change)="change($event)"></ng-scroll-picker>
+    <span class="flex justify-content-center">{{selectedValue}}</span>
+  </div>
+
 
 <app-date-roller></app-date-roller>

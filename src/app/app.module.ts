@@ -23,6 +23,7 @@ import { MessageService } from 'primeng/api';
 import { AngularEditorModule } from '@kolkov/angular-editor';
 import { HttpClientModule } from '@angular/common/http';
 import { DateRollerComponent } from './date-roller/date-roller.component'
+import { NgScrollPickerModule } from "ng-scroll-picker";
 
 @NgModule({
   declarations: [AppComponent, DateRollerComponent],
@@ -44,6 +45,7 @@ import { DateRollerComponent } from './date-roller/date-roller.component'
     CardModule,
     OverlayPanelModule,
     TableModule,
+    NgScrollPickerModule,
 	AngularEditorModule,
 	HttpClientModule
   ],

@@ -1,6 +1,10 @@
 import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
 import { AngularEditorConfig } from '@kolkov/angular-editor';
-
+import {
+  PickerDataModel,
+  PickerValueModel,
+  PickerResponseModel,
+} from 'ng-scroll-picker';
 import {
   Definition,
   Designer,
@@ -82,7 +86,23 @@ function createDefinition(): Definition {
   templateUrl: './app.component.html',
 })
 export class AppComponent implements OnInit {
-  htmlContent = '';
+  selectedValue: any;
+
+  data: PickerDataModel[] = [
+    {
+      textAlign: 'start',
+      weight: 9,
+      className: undefined,
+      onClick: (gIndex: any, iIndex: any, selectedValue: any) => {
+        console.log('selectedValue', selectedValue);
+      },
+      currentIndex: 0,
+      list: [],
+      divider: false,
+      text: 'test',
+      groupName: 'test',
+    },
+  ];
 
   config: AngularEditorConfig = {
     editable: true,
@@ -133,25 +153,6 @@ export class AppComponent implements OnInit {
   ref: DynamicDialogRef | undefined;
   ProductListDemo: any;
   showModal: boolean = false;
-
-  data = [
-    {
-      scheduledDate: '05/07/23',
-      scheduledTime: '09:30',
-      eventDate: '05/07/23',
-      eventTime: '06:30',
-      event: 'Email Remainder 1 sent',
-      isSuccess: true,
-    },
-    {
-      scheduledDate: '06/12/23',
-      scheduledTime: '11:30',
-      eventDate: '',
-      eventTime: '',
-      event: 'Did Not Print Snail Mail',
-      isSuccess: false,
-    },
-  ];
   templates: any = [
     { name: 'First Follow Up', value: 1 },
     { name: 'Second Follow Up', value: 2},
@@ -186,7 +187,6 @@ export class AppComponent implements OnInit {
       return './assets/angular-icon.svg';
     },
   };
-  
   public readonly validatorConfiguration: ValidatorConfiguration = {
     step: (step: Step) =>
       !!step.name && (/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(step.properties['mailFrom'] as string)) as boolean,
@@ -196,6 +196,16 @@ export class AppComponent implements OnInit {
 
   public ngOnInit() {
     this.updateDefinitionJSON();
+   const options = [
+      { label: '1', value: '1' },
+      { label: '2', value: '2' },
+      { label: '3', value: '3' },
+      { label: '4', value: '4' },
+      { label: '5', value: '5' },
+      { label: '6', value: '6' },
+    ]
+    this.data[0].list = options;
+    this.selectedValue = this.data[0].list[0].value;
   }
 
   public onDesignerReady(designer: Designer) {
@@ -365,72 +375,6 @@ export class AppComponent implements OnInit {
     });
   }
 
-  events = [
-    {
-      status: '18 Jun 2023',
-      date: '10:00 AM EDT',
-      icon: 'fa-solid fa-envelope-open text-2xl',
-      icon1: 'hidden',
-      icon2: 'hidden',
-      color: '#7EC607',
-      bgcolors: 'demo_green',
-      image: 'assets/img/cadence_email_icon.svg',
-    },
-    // {
-    //   status: '18 Jun 2023',
-    //   date: '10:00 AM EDT',
-    //   icon: 'fa-solid fa-envelope-open text-2xl',
-    //   icon1: 'hidden',
-    //   icon2: 'hidden',
-    //   color: '#7EC607',
-    //   bgcolors: 'demo_green',
-    //   image: 'assets/img/cadence_email_icon.svg',
-    // },
-    // {
-    //   status: 'Shipped',
-    //   date: '15/10/2020 16:15',
-    //   icon: 'fa-solid fa-envelope text-2xl',
-    //   icon1: 'hidden',
-    //   icon2: 'hidden',
-    //   color: '#E9573E',
-    //   bgcolors: 'demo_red',
-    //   image: 'assets/img/cadence_emailred_icon.svg',
-    // },
-    // {
-    //   status: 'Delivered',
-    //   date: '16/10/2020 10:00',
-    //   icon: 'fa-solid fa-phone-volume text-2xl',
-    //   icon1: 'hidden',
-    //   icon2: 'hidden',
-    //   color: '#8E8F8E',
-    //   bgcolors: 'demo_gray',
-    //   image: 'assets/img/cadence_phone_icon.svg',
-    //   image2: 'assets/img/cadence_phone_icon.svg',
-    //   image3: 'assets/img/cadence_phone_icon.svg',
-    // },
-    // {
-    //   status: 'Delivered',
-    //   date: '16/10/2020 10:00',
-    //   icon: 'fa-solid fa-envelope-open-text text-2xl',
-    //   icon1: 'fa-solid fa-message text-2xl',
-    //   icon2: 'fa-solid fa-envelope text-2xl',
-    //   color: '#8E8F8E',
-    //   bgcolors: 'demo_gray',
-    //   image: 'assets/img/cadence_phone_icon.svg',
-    // },
-    // {
-    //   status: 'Delivered',
-    //   date: '16/10/2020 10:00',
-    //   icon: 'fa-solid fa-envelope text-2xl',
-    //   icon1: 'hidden',
-    //   icon2: 'hidden',
-    //   color: '#8E8F8E',
-    //   bgcolors: 'demo_gray',
-    //   image: 'assets/img/cadence_phone_icon.svg',
-    // },
-  ];
-
-  showFullMail() {}
 
   toggleCheckbox(event: any) {
     this.toggle = !this.toggle;
@@ -448,4 +392,11 @@ export class AppComponent implements OnInit {
   onEditorBlur(event: any) {
     this.cursorPosition = null;
   }
+
+
+  // Scroll picker
+  change(res: PickerResponseModel) {
+    this.selectedValue = this.data[res.gIndex].list[res.iIndex].value;
+  }
+  
 }

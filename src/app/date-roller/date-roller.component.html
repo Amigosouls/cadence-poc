@@ -3,15 +3,13 @@
 </div>
 <br />
 <div class="picker">
-  <div class="picker-window"></div>
-  <div class="triangle"></div>
-  <ul class="picker-day" (mouseover)="day($event)">
+  <ul class="picker-day" (mousewheel)="day($event)">
     <li [value]="day" *ngFor="let day of days">{{ day }}</li>
   </ul>
-  <ul class="picker-hour" (mouseover)="month($event)">
+  <ul class="picker-hour" (mousewheel)="month($event)">
     <li [value]="month.value" *ngFor="let month of months">{{ month.name }}</li>
   </ul>
-  <ul class="picker-minute" (mouseover)="year($event)">
+  <ul class="picker-minute" (mousewheel)="year($event)">
     <li [value]="year.value" *ngFor="let year of years">{{ year.name }}</li>
   </ul>
 </div>

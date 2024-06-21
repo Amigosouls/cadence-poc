@@ -74,6 +74,7 @@
     padding-bottom: 3em;
     padding-top: 3em;
     list-style-type: none; 
+
   }
   .picker ul::-webkit-scrollbar {
     display: none;
@@ -87,9 +88,7 @@
   .picker-day {
     padding-right: 0.5em;
   }
-  .picker-day span {
-    padding-left: 0.56em;
-  }
+
   .button-container {
     text-align: center;
     padding-top: 3rem;

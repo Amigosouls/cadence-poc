@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./date-roller.component.css'],
 })
 export class DateRollerComponent implements OnInit {
-  days: number[] = [];
+  days: number[] = Array.from({length: 20}, (_, index) => index + 1);
   months = [
     { name: 'Hours', value: 1 },
     { name: 'Days', value: 2 },
@@ -18,26 +18,25 @@ export class DateRollerComponent implements OnInit {
     { name: 'after invoice', value: 3 },
   ];
 
-  selectedDay: number | undefined;
-  selectedDuration: string | undefined;
-  selectedOption: string | undefined;
+  selectedDay= 1;
+  selectedDuration= '';
+  selectedOption=  '';
 
   ngOnInit() {
-    this.initializeDays();
-    this.selectedDay = this.selectedDay;
-    this.selectedDuration = this.selectedDuration;
-    this.selectedOption = this.selectedOption;
+    //this.initializeDays();
+  
+    console.log(this.days)
   }
 
-  initializeDays() {
-    for (let i = 1; i <= 99; i++) {
-      this.days.push(i);
-    }
-  }
+  // initializeDays() {
+  //   for (let i = 1; i <= 99; i++) {
+  //     this.days.push(i);
+  //   }
+  // }
 
   day(event: any) {
+    console.log(event.target.value)
     this.selectedDay = event.target.value;
-    console.log(this.selectedDay);
   }
   month(event: any) {
     //this.selectedDuration = event.target.value;
