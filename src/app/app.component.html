@@ -23,87 +23,24 @@
   >
   </sqd-designer>
 
-  <!-- <span class="w-full">
-    <div class="flow_chart w-full">
-      <div class="card h-full w-full p-3 shadow-1">
-        <div>
-          <div class="flex flex-row justify-content-start align-items-center">
-            <h5 class="m-0 font-semibold w-full text-gray-700">Auto Follow Up From Cadence</h5>
-          </div>
-        </div>
-        <hr>
-        <p-timeline [value]="definition.sequence"  styleClass="customized-timeline mt-8">
-          <ng-template pTemplate="marker" let-event>
-            <span
-              class="custom-marker shadow-2"
-              [style.backgroundColor]="'#7EC607'"
-            >
-            </span>
-          </ng-template>
-          <ng-template pTemplate="content" let-event>
-            <div class="flex-container flex flex-row align-items-start">
-              <div
-                (mouseover)="op.show($event, targetEl)"
-                class="card cursor-pointer mb-0 p-4 flex flex-row gap-3"
-                [ngClass]="'demo_green'"
-              >
-                <i
-                  class="fa-solid text-2xl"
-                  [ngClass]="{
-                    'fa-envelope-open': event.type === 'Mail',
-                    'fa-phone-volume': event.type === 'Call'
-                  }"
-                ></i>
-                <i [ngClass]="event.icon1"></i>
-                <i [ngClass]="event.icon2"></i>
-              </div>
-              <div class="flex flex-column">
-                <p-card
-                  class="p-0"
-                  [header]="event.properties['scheduledTime']"
-                  [subheader]="event.properties['time']"
-                ></p-card>
-                <span style="margin-left: 4em" #targetEl></span>
-              </div>
-            </div>
-            <p class="event-description"></p>
-          </ng-template>
-        </p-timeline>
-      </div>
-    </div>
-    <p-overlayPanel #op [showCloseIcon]="true" [dismissable]="false">
-      <p-table [value]="data" [tableStyle]="{ 'min-width': '25rem' }">
-          <ng-template pTemplate="header">
-              <tr>
-                  <th>Scheduled Date</th>
-                  <th>Event</th>
-              </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-product>
-              <tr class="">
-                  <td>
-                      <div class="flex flex-row align-items-center gap-4">
-                          <span>{{ product.scheduledDate }}</span>
-                          <span>{{ product.scheduledTime }}</span>
-                      </div>
-                  </td>
-                 
-                  <td>
-                      <div class="flex flex-row align-items-center gap-2"><span (click)="showFullMail()"
-                              class="cursor-pointer">{{ product.event }}</span><span
-                              class="text-2xl {{ product.isSuccess ? 'pi pi-check-square text-green-500':'pi pi-exclamation-triangle text-red-400'}}"></span>
-                      </div>
-                  </td>
-              </tr>
-          </ng-template>
-      </p-table>
-    </p-overlayPanel>
-  </span> -->
-</span>
 <ng-template #rootEditor let-editor>
   <!-- <h2>Root Editor</h2>
 
+
   <h3>Test Data</h3>
+  <mat-form-field class="full-width">
+    <input matInput type="number" [value]="editor.definition.properties.testData" [readonly]="editor.isReadonly"
+      (input)="
+        updateProperty(
+          editor.definition.properties,
+          'testData',
+          $event,
+          editor.context
+        )
+      " />
+  </mat-form-field> -->
+ 
+  <!-- <h3>Test Data</h3>
   <mat-form-field class="full-width">
     <input matInput type="number" [value]="editor.definition.properties.testData" [readonly]="editor.isReadonly"
       (input)="
@@ -118,16 +55,20 @@
 </ng-template>
 
 <ng-template #stepEditor let-editor>
-  <div>
     <p-dialog
       header="Set Configuration"
-      [modal]="false"
+      [modal]="true"
       [(visible)]="visible"
       [style]="{ width: '50rem' }"
-      [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
-      [maximizable]="true"
+      [draggable]="false"
       (onHide)="toggleSelectedStepClicked()"
+      (onShow)="reflectChanges()"
+     
     >
+    <span>
+      <ng-scroll-picker [data]="data" (change)="change($event)"></ng-scroll-picker>
+    <span>{{selectedValue}}</span>
+    </span>
       <span class="p-float-label flex gap-2 flex-column">
         <label>Email From</label>
         <input
@@ -267,7 +208,6 @@
         </mat-form-field>
       </mat-tab>
     </mat-tab-group> -->
-  </div>
   <!-- <div>
     <h2>Job Editor</h2>
     <mat-tab-group>
@@ -311,6 +251,7 @@
   </button>
   &nbsp; Is valid: <strong>{{ isValid }}</strong>
 </div> -->
+</span>
 
 <div class="block">
   <mat-form-field class="full-width flex-1s">
@@ -319,11 +260,11 @@
     }}</textarea>
   </mat-form-field>
 </div>
+<!-- <p-dialog [visible]="true">
+  <span class="">
+   
+  </span>
+</p-dialog> -->
 
-<div class="w-20rem">
-    <ng-scroll-picker [data]="data" (change)="change($event)"></ng-scroll-picker>
-    <span class="flex justify-content-center">{{selectedValue}}</span>
-  </div>
 
 
-<app-date-roller></app-date-roller>

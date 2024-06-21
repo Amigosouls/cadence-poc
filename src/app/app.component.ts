@@ -1,10 +1,6 @@
 import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
 import { AngularEditorConfig } from '@kolkov/angular-editor';
-import {
-  PickerDataModel,
-  PickerValueModel,
-  PickerResponseModel,
-} from 'ng-scroll-picker';
+
 import {
   Definition,
   Designer,
@@ -22,6 +18,7 @@ import {
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { scheduled } from 'rxjs';
+import { PickerDataModel, PickerResponseModel, PickerValueModel } from 'ng-scroll-picker';
 
 function createJob(): Step {
   return {
@@ -86,24 +83,6 @@ function createDefinition(): Definition {
   templateUrl: './app.component.html',
 })
 export class AppComponent implements OnInit {
-  selectedValue: any;
-
-  data: PickerDataModel[] = [
-    {
-      textAlign: 'start',
-      weight: 9,
-      className: undefined,
-      onClick: (gIndex: any, iIndex: any, selectedValue: any) => {
-        console.log('selectedValue', selectedValue);
-      },
-      currentIndex: 0,
-      list: [],
-      divider: false,
-      text: 'test',
-      groupName: 'test',
-    },
-  ];
-
   config: AngularEditorConfig = {
     editable: true,
     spellcheck: true,
@@ -143,6 +122,23 @@ export class AppComponent implements OnInit {
   public visible: boolean = false;
   mailcontent: boolean = false;
   cursorPosition: any;
+  selectedValue: any;
+
+  data: PickerDataModel[] = [
+    {
+      textAlign: 'start',
+      weight: 9,
+      className: undefined,
+      onClick: (gIndex: any, iIndex: any, selectedValue: any) => {
+        console.log('selectedValue', selectedValue);
+      },
+      currentIndex: 0,
+      list: [],
+      divider: false,
+      text: 'test',
+      groupName: 'test',
+    },
+  ];
   constructor(
     public dialogService: DialogService,
     private ngZone: NgZone,
@@ -196,15 +192,20 @@ export class AppComponent implements OnInit {
 
   public ngOnInit() {
     this.updateDefinitionJSON();
-   const options = [
-      { label: '1', value: '1' },
-      { label: '2', value: '2' },
-      { label: '3', value: '3' },
-      { label: '4', value: '4' },
-      { label: '5', value: '5' },
-      { label: '6', value: '6' },
-    ]
-    this.data[0].list = options;
+    const malaysianBanks: PickerValueModel[] = [
+      { label: 'Maybank', value: 'MBB' },
+      { label: 'CIMB Bank', value: 'CIMB' },
+      { label: 'Public Bank', value: 'PBB' },
+      { label: 'RHB Bank', value: 'RHB' },
+      { label: 'Hong Leong Bank', value: 'HLB' },
+      { label: 'AmBank', value: 'AMB' },
+      { label: 'Bank Islam Malaysia', value: 'BIMB' },
+      { label: 'OCBC Bank', value: 'OCBC' },
+      { label: 'HSBC Bank Malaysia', value: 'HSBC' },
+      { label: 'Standard Chartered Bank Malaysia', value: 'SCB' },
+    ];
+
+    this.data[0].list = malaysianBanks;
     this.selectedValue = this.data[0].list[0].value;
   }
 
@@ -393,8 +394,15 @@ export class AppComponent implements OnInit {
     this.cursorPosition = null;
   }
 
+  reflectChanges(){
+    this.cdr.detectChanges();
+    
+    // Optional: Trigger window resize event
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 0);
+  }
 
-  // Scroll picker
   change(res: PickerResponseModel) {
     this.selectedValue = this.data[res.gIndex].list[res.iIndex].value;
   }
