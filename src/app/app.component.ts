@@ -19,7 +19,11 @@ import {
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { scheduled } from 'rxjs';
-import { PickerDataModel, PickerResponseModel, PickerValueModel } from 'ng-scroll-picker';
+import {
+  PickerDataModel,
+  PickerResponseModel,
+  PickerValueModel,
+} from 'ng-scroll-picker';
 
 function createJob(): Step {
   return {
@@ -84,6 +88,9 @@ function createDefinition(): Definition {
   templateUrl: './app.component.html',
 })
 export class AppComponent implements OnInit {
+change($event: PickerResponseModel) {
+throw new Error('Method not implemented.');
+}
   config: AngularEditorConfig = {
     editable: true,
     spellcheck: true,
@@ -126,15 +133,47 @@ export class AppComponent implements OnInit {
   stepName: string = '';
   mailcontent: boolean = false;
   cursorPosition: any;
-  selectedValue: any;
+  selectedDaysValue: any;
+  selectedHoursValue: any;
+  selectedBasedOnValue: any;
 
   data: PickerDataModel[] = [
     {
       textAlign: 'start',
       weight: 9,
       className: undefined,
-      onClick: (gIndex: any, iIndex: any, selectedValue: any) => {
-        console.log('selectedValue', selectedValue);
+      onClick: (gIndex: any, iIndex: any, selectedDaysValue: any) => {
+        console.log('selectedDaysValue', selectedDaysValue);
+      },
+      currentIndex: 0,
+      list: [],
+      divider: false,
+      text: 'test',
+      groupName: 'test',
+    },
+  ];
+  hours: PickerDataModel[] = [
+    {
+      textAlign: 'start',
+      weight: 9,
+      className: undefined,
+      onClick: (gIndex: any, iIndex: any, selectedHoursValue: any) => {
+        console.log('selectedHoursValue', selectedHoursValue);
+      },
+      currentIndex: 0,
+      list: [],
+      divider: false,
+      text: 'test',
+      groupName: 'test',
+    },
+  ];
+  basedon: PickerDataModel[] = [
+    {
+      textAlign: 'start',
+      weight: 9,
+      className: undefined,
+      onClick: (gIndex: any, iIndex: any, selectedBasedOnValue: any) => {
+        console.log('selectedBasedOnValue', selectedBasedOnValue);
       },
       currentIndex: 0,
       list: [],
@@ -160,7 +199,7 @@ export class AppComponent implements OnInit {
   runBasedOn: any = [
     { name: 'before duedate', value: 1 },
     { name: 'after duedate', value: 2 },
-    { name: 'after invoicecreation', value: 3 }
+    { name: 'after invoicecreation', value: 3 },
   ];
   public readonly toolboxConfiguration: ToolboxConfiguration = {
     groups: [
@@ -189,14 +228,43 @@ export class AppComponent implements OnInit {
   };
   public readonly validatorConfiguration: ValidatorConfiguration = {
     step: (step: Step) =>
-      !!step.name && (/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(step.properties['mailFrom'] as string)) as boolean,
+      !!step.name &&
+      (/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(
+        step.properties['mailFrom'] as string
+      ) as boolean),
     root: (definition: Definition) =>
-      definition.properties['mailFrom'] == '' && definition.properties['scheduledTime'] == '' && definition.properties['emailTemplate'] == ''
+      definition.properties['mailFrom'] == '' &&
+      definition.properties['scheduledTime'] == '' &&
+      definition.properties['emailTemplate'] == '',
   };
 
   public ngOnInit() {
     this.updateDefinitionJSON();
     const malaysianBanks: PickerValueModel[] = [
+      { label: '01', value: 'MBB' },
+      { label: '01', value: 'CIMB' },
+      { label: '01', value: 'PBB' },
+      { label: '01', value: 'RHB' },
+      { label: '01', value: 'HLB' },
+      { label: '01', value: 'AMB' },
+      { label: '01', value: 'BIMB' },
+      { label: '01', value: 'OCBC' },
+      { label: '01', value: 'HSBC' },
+      { label: '01', value: 'SCB' },
+    ];
+    const indianBanks: PickerValueModel[] = [
+      { label: 'Maybank', value: 'MBB' },
+      { label: 'CIMB Bank', value: 'CIMB' },
+      { label: 'Public Bank', value: 'PBB' },
+      { label: 'RHB Bank', value: 'RHB' },
+      { label: 'Hong Leong Bank', value: 'HLB' },
+      { label: 'AmBank', value: 'AMB' },
+      { label: 'Bank Islam Malaysia', value: 'BIMB' },
+      { label: 'OCBC Bank', value: 'OCBC' },
+      { label: 'HSBC Bank Malaysia', value: 'HSBC' },
+      { label: 'Standard Chartered Bank Malaysia', value: 'SCB' },
+    ];
+    const canadianBanks: PickerValueModel[] = [
       { label: 'Maybank', value: 'MBB' },
       { label: 'CIMB Bank', value: 'CIMB' },
       { label: 'Public Bank', value: 'PBB' },
@@ -210,7 +278,11 @@ export class AppComponent implements OnInit {
     ];
 
     this.data[0].list = malaysianBanks;
-    this.selectedValue = this.data[0].list[0].value;
+    this.selectedDaysValue = this.data[0].list[0].value;
+    this.hours[0].list = indianBanks;
+    this.selectedHoursValue = this.hours[0].list[0].value;
+    this.basedon[0].list = canadianBanks;
+    this.selectedBasedOnValue = this.basedon[0].list[0].value;
   }
 
   public onDesignerReady(designer: Designer) {
@@ -385,7 +457,6 @@ export class AppComponent implements OnInit {
     }
   }
 
-
   closeModal() {
     this.mailcontent = false;
   }
@@ -419,10 +490,9 @@ export class AppComponent implements OnInit {
     });
   }
 
-
   toggleCheckbox(event: any) {
     this.toggle = !this.toggle;
-    console.log(event.target.checked);
+    this.reflectChanges();
   }
 
   onDragStart(event: any, content: string) {
@@ -446,8 +516,13 @@ export class AppComponent implements OnInit {
     }, 0);
   }
 
-  change(res: PickerResponseModel) {
-    this.selectedValue = this.data[res.gIndex].list[res.iIndex].value;
+  dayschange(res: PickerResponseModel) {
+    this.selectedDaysValue = this.data[res.gIndex].list[res.iIndex].value;
   }
-
+  hourschange(res: PickerResponseModel) {
+    this.selectedHoursValue = this.hours[res.gIndex].list[res.iIndex].value;
+  }
+  basedonchange(res: PickerResponseModel) {
+    this.selectedBasedOnValue = this.basedon[res.gIndex].list[res.iIndex].value;
+  }
 }

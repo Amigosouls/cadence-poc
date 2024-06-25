@@ -3,22 +3,20 @@
 </div>
 <br />
 <div class="picker">
-  <ul class="picker-day" (mousewheel)="day($event)">
-    <li [value]="day" *ngFor="let day of days">{{ day }}</li>
+  <ul class="picker-day" (wheel)="onScroll($event, 'day')">
+    <li *ngFor="let day of days">{{ day }}</li>
   </ul>
-  <ul class="picker-hour" (mousewheel)="month($event)">
-    <li [value]="month.value" *ngFor="let month of months">{{ month.name }}</li>
+  <ul class="picker-hour" (wheel)="onScroll($event, 'hour')">
+    <li *ngFor="let month of months">{{ month }}</li>
   </ul>
-  <ul class="picker-minute" (mousewheel)="year($event)">
-    <li [value]="year.value" *ngFor="let year of years">{{ year.name }}</li>
+  <ul class="picker-minute" (wheel)="onScroll($event, 'minute')">
+    <li *ngFor="let year of years">{{ year }}</li>
   </ul>
 </div>
 <input
   pInputText
   type="text"
   class="p-inputtext-sm w-20rem mt-5 ml-5 mb-5"
-  [ngModel]="
-    this.selectedDay + ' ' + this.selectedDuration + ' ' + this.selectedOption
-  "
-  value="this.selectedDay + ' ' + this.selectedDuration + ' ' + this.selectedOption"
+  [ngModel]="this.selectedDay + ' ' + this.selectedMonth + ' ' + this.selectedYear"
+  value="this.selectedDay + ' ' + this.selectedMonth + ' ' + this.selectedYear"
 />

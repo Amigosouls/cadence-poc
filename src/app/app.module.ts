@@ -25,6 +25,17 @@ import { HttpClientModule } from '@angular/common/http';
 import { DateRollerComponent } from './date-roller/date-roller.component'
 import { NgScrollPickerModule } from "ng-scroll-picker";
 
+import {
+  MatDialogModule,
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle,
+} from '@angular/material/dialog';
+
 @NgModule({
   declarations: [AppComponent, DateRollerComponent],
   imports: [
@@ -46,6 +57,8 @@ import { NgScrollPickerModule } from "ng-scroll-picker";
     OverlayPanelModule,
     TableModule,
     NgScrollPickerModule,
+    MatDialogModule,
+  
 	AngularEditorModule,
 	HttpClientModule
   ],

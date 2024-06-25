@@ -1,66 +1,55 @@
-import { Component, OnInit } from '@angular/core';
+
+
+// email-view.component.ts
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-date-roller',
   templateUrl: './date-roller.component.html',
   styleUrls: ['./date-roller.component.css'],
 })
-export class DateRollerComponent implements OnInit {
-  days: number[] = Array.from({length: 20}, (_, index) => index + 1);
-  months = [
-    { name: 'Hours', value: 1 },
-    { name: 'Days', value: 2 },
-    { name: 'Months', value: 3 },
-  ];
-  years = [
-    { name: 'before due', value: 1 },
-    { name: 'after due', value: 2 },
-    { name: 'after invoice', value: 3 },
-  ];
+export class DateRollerComponent {
+  days = Array.from({ length: 31 }, (_, i) => i + 1);
+  months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  years = Array.from({ length: 50 }, (_, i) => 2024 - i);
 
-  selectedDay= 1;
-  selectedDuration= '';
-  selectedOption=  '';
+  selectedDay = 1;
+  selectedMonth = 'Jan';
+  selectedYear = 2024;
 
-  ngOnInit() {
-    //this.initializeDays();
-  
-    console.log(this.days)
-  }
+  private debounceScroll = false;
 
-  // initializeDays() {
-  //   for (let i = 1; i <= 99; i++) {
-  //     this.days.push(i);
-  //   }
-  // }
+  onScroll(event: WheelEvent, type: 'day' | 'hour' | 'minute') {
+    if (this.debounceScroll) {
+     // event.preventDefault();
+      return;
+    }
 
-  day(event: any) {
-    console.log(event.target.value)
-    this.selectedDay = event.target.value;
-  }
-  month(event: any) {
-    //this.selectedDuration = event.target.value;
-    const length = this.months.length.valueOf();
-    for (let i = 0; i < length; i++) {
-      if (event.target.value == this.months[i].value) {
-        {
-          this.selectedDuration = this.months[i].name;
-        }
-      }
-      console.log(this.selectedDuration);
+    this.debounceScroll = true;
+    setTimeout(() => this.debounceScroll = false, 200);
+
+    event.preventDefault();
+    const delta = Math.sign(event.deltaY);
+    console.log(delta)
+
+    switch (type) {
+      case 'day':
+        this.selectedDay = this.changeValue(this.selectedDay, delta, 1, 31);
+        break;
+      case 'hour':
+        const monthIndex = this.months.indexOf(this.selectedMonth);
+        this.selectedMonth = this.months[this.changeValue(monthIndex, delta, 0, 11)];
+        break;
+      case 'minute':
+        this.selectedYear = this.changeValue(this.selectedYear, delta, 2024 - 49, 2024);
+        break;
     }
   }
 
-  year(event: any) {
-    //this.selectedDuration = event.target.value;
-    const length = this.years.length.valueOf();
-    for (let i = 0; i < length; i++) {
-      if (event.target.value == this.years[i].value) {
-        {
-          this.selectedOption = this.years[i].name;
-        }
-      }
-      console.log(this.selectedDay + ' ' + this.selectedDuration + ' ' + this.selectedOption);
-    }
+  private changeValue(current: number, delta: number, min: number, max: number): number {
+    let newValue = current + delta;
+    if (newValue < min) newValue = min;
+    if (newValue > max) newValue = max;
+    return newValue;
   }
 }
