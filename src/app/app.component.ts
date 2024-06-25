@@ -13,6 +13,7 @@ import {
   ToolboxConfiguration,
   ValidatorConfiguration,
   BranchedStep,
+  Editor,
 } from 'sequential-workflow-designer';
 
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -50,7 +51,7 @@ function createMail(): Step {
     componentType: 'task',
     name: 'Mail',
     type: 'Mail',
-    properties: { mailFrom: '', scheduledTime: '', emailTemplate: '',runBasedOn:'', mailTo:'' },
+    properties: { mailFrom: '', scheduledTime: '', emailTemplate: '', runBasedOn: '', mailTo: '',isValid:false },
   };
 }
 
@@ -60,7 +61,7 @@ function createCall(): Step {
     componentType: 'task',
     name: 'Call',
     type: 'Call',
-    properties: { toMail: '', scheduled: '' },
+    properties: { toMail: '', scheduled: '',isValid:false },
   };
 }
 
@@ -70,11 +71,11 @@ function createDefinition(): Definition {
       mailFrom: '',
       scheduledTime: '',
       emailTemplate: '',
-      runBasedOn : '',
-      mailTo:'',
-      
+      runBasedOn: '',
+      mailTo: '',
+      isValid:false
     },
-    sequence: [],
+    sequence: [ ],
   };
 }
 
@@ -110,6 +111,8 @@ export class AppComponent implements OnInit {
     ],
   };
 
+  selectedStep:any = {};
+
   toggle: boolean = false;
   private designer?: Designer;
   public definition: Definition = createDefinition();
@@ -120,6 +123,7 @@ export class AppComponent implements OnInit {
   public isEditorCollapsed = false;
   public isValid?: boolean;
   public visible: boolean = false;
+  stepName: string = '';
   mailcontent: boolean = false;
   cursorPosition: any;
   selectedValue: any;
@@ -144,14 +148,14 @@ export class AppComponent implements OnInit {
     private ngZone: NgZone,
     private cdr: ChangeDetectorRef,
     public messageService: MessageService
-  ) {}
+  ) { }
 
   ref: DynamicDialogRef | undefined;
   ProductListDemo: any;
   showModal: boolean = false;
   templates: any = [
     { name: 'First Follow Up', value: 1 },
-    { name: 'Second Follow Up', value: 2},
+    { name: 'Second Follow Up', value: 2 },
   ];
   runBasedOn: any = [
     { name: 'before duedate', value: 1 },
@@ -229,6 +233,11 @@ export class AppComponent implements OnInit {
     const length = this.definition.sequence.length.valueOf();
     //console.log(this.definition.sequence.length.valueOf());
     this.visible = true;
+    this.getInvalidStep();
+    this.selectedStep = null;
+    let step = this.definition.sequence.find(f =>  f.id == this.selectedStepId);
+    if(step) this.selectedStep = step;
+
     // for (let i = 0; i < length; i++) {
     //   if (this.definition.sequence[i].id === this.selectedStepId) {
     //     if (this.definition.sequence[i].name === 'Mail') {
@@ -239,6 +248,8 @@ export class AppComponent implements OnInit {
     //   }
     // }
   }
+
+
 
   public onIsToolboxCollapsedChanged(isCollapsed: boolean) {
     this.isToolboxCollapsed = isCollapsed;
@@ -262,6 +273,29 @@ export class AppComponent implements OnInit {
     properties[name] = (event.target as HTMLInputElement).value;
     context.notifyPropertiesChanged();
   }
+
+  public updateStepName(
+    editor: any,
+    name: string,
+    event: any,
+    context: any,
+    isNameChanges:boolean = false
+  ) {
+
+    let seqns = editor.definition?.sequence;
+    let step = editor?.step;
+    if (!seqns?.length || !step) return;
+
+    let seq = seqns.find((f: any) => f.id == step.id);
+    if (seq) {
+      seq[name] = event.target.value;
+      if(isNameChanges)
+        context.notifyNameChanged();
+      else
+        context.notifyPropertiesChanged();
+    }
+  }
+
 
   public reloadDefinitionClicked() {
     this.definition = createDefinition();
@@ -289,50 +323,59 @@ export class AppComponent implements OnInit {
   }
 
   private updateDefinitionJSON() {
+    this.getInvalidStep();
     this.ngZone.run(() => {
       this.definitionJSON = JSON.stringify(this.definition, null, 2);
       this.cdr.detectChanges();
     })
-    this.changeStepColor();
+    
+  }
+  private getInvalidStep() {
+    var elements = document.querySelectorAll('.sqd-step-task') as NodeListOf<Element>;;
+    var matchedElement: any = null;
+    // Loop through each element
+    elements.forEach((element: any) => {
+      // Check if the element has the data-step-id attribute
+      if (element.hasAttribute('data-step-id')) {
+        // Get the value of the data-step-id attribute
+        var stepId = element.getAttribute('data-step-id');
+        // Compare the attribute value with the provided ID value
+        this.definition.sequence.forEach(seq => {
+          if(!seq.properties['isValid']){
+            this.changeStepColor(matchedElement)
+          }
+        });
+        if (stepId === this.selectedStepId) {
+          matchedElement = element; // Found the matching element
+          return; // Exit the loop early since we found the match
+        }
+      }
+    });
+    if (matchedElement)
+      this.changeStepColor(matchedElement);
+
+   
   }
 
-  private changeStepColor(){
-    var elements = document.querySelectorAll('.sqd-step-task') as NodeListOf<Element>;;
-    var matchedElement:any = null;
-
-    // Loop through each element
-    elements.forEach((element:any) => {
-        // Check if the element has the data-step-id attribute
-        if (element.hasAttribute('data-step-id')) {
-            // Get the value of the data-step-id attribute
-            var stepId = element.getAttribute('data-step-id');
-
-            // Compare the attribute value with the provided ID value
-            if (stepId === this.selectedStepId) {
-                matchedElement = element; // Found the matching element
-                return; // Exit the loop early since we found the match
-            }
-        }
-    });
-
+  changeStepColor(matchedElement:any){
     if (matchedElement) {
-        var rectElement = matchedElement.querySelector('rect') as HTMLElement;
-        if (rectElement) {
-            // Change the style fill to aqua
-            if(this.isValid){
-              rectElement.style.fill = 'green';
-            } // Use setAttribute to change SVG fill
-            else{
-              rectElement.style.fill = 'red';
-            }
+      var rectElement = matchedElement.querySelector('rect') as HTMLElement;
+      if (rectElement) {
+        // Change the style fill to aqua
+        if (this.isValid) {
+          rectElement.style.fill = 'green';
+        } // Use setAttribute to change SVG fill
+        else {
+          rectElement.style.fill = 'red';
         }
+      }
     }
   }
 
   private updateIsValid() {
     this.isValid = this.designer?.isValid();
-   
-}
+
+  }
 
   public toggleSelectedStepClicked1() {
     if (this.selectedStepId) {
@@ -394,9 +437,9 @@ export class AppComponent implements OnInit {
     this.cursorPosition = null;
   }
 
-  reflectChanges(){
+  reflectChanges() {
     this.cdr.detectChanges();
-    
+
     // Optional: Trigger window resize event
     setTimeout(() => {
       window.dispatchEvent(new Event('resize'));
@@ -406,5 +449,5 @@ export class AppComponent implements OnInit {
   change(res: PickerResponseModel) {
     this.selectedValue = this.data[res.gIndex].list[res.iIndex].value;
   }
-  
+
 }
