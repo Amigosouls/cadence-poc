@@ -31,6 +31,7 @@
             );
           " />
       </span>
+        </div>
       <div class="flex flex-row gap-3 mt-4">
         <span class="p-float-label w-full flex gap-2 flex-column">
           <label>Email From</label>
@@ -95,7 +96,7 @@
               editor.step.properties,
               'ScheduledTime',
               $event,
-              editor.context
+              editor.contextF
             )
           " /></span>
            <div class="flex flex-column align-items-center">
@@ -177,7 +178,7 @@
         <h4>Custom Template Editor</h4>
         <angular-editor [config]="config" (focus)="onEditorFocus($event)"
           (blur)="onEditorBlur($event)"></angular-editor>
-      </div> -->
+      </div>
       </p-dialog>
     </span>
 
