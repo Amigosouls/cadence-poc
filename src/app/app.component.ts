@@ -55,7 +55,7 @@ function createMail(): Step {
     componentType: 'task',
     name: 'Mail',
     type: 'Mail',
-    properties: { mailFrom: '', scheduledTime: '', emailTemplate: '', runBasedOn: '', mailTo: '',isValid:false },
+    properties: { FromEmail: '', Days: '',Minute:'' ,Hour: '', RunBasedOn: '', ToEmail: '',MailTemplateId:'' ,CcEmail:'',BccEmail:'',IsAttachInvoicePdf:null,IsAttachInvoiceDocuments:null,ScheduledTime:'',isValid: false },
   };
 }
 
@@ -65,21 +65,17 @@ function createCall(): Step {
     componentType: 'task',
     name: 'Call',
     type: 'Call',
-    properties: { toMail: '', scheduled: '',isValid:false },
+    properties: { toMail: '', scheduled: '', isValid: false },
   };
 }
 
 function createDefinition(): Definition {
   return {
     properties: {
-      mailFrom: '',
-      scheduledTime: '',
-      emailTemplate: '',
-      runBasedOn: '',
-      mailTo: '',
-      isValid:false
+      CadenceName:'',
+      
     },
-    sequence: [ ],
+    sequence: [],
   };
 }
 
@@ -88,9 +84,7 @@ function createDefinition(): Definition {
   templateUrl: './app.component.html',
 })
 export class AppComponent implements OnInit {
-change($event: PickerResponseModel) {
-throw new Error('Method not implemented.');
-}
+
   config: AngularEditorConfig = {
     editable: true,
     spellcheck: true,
@@ -118,7 +112,7 @@ throw new Error('Method not implemented.');
     ],
   };
 
-  selectedStep:any = {};
+  selectedStep: any = {};
 
   toggle: boolean = false;
   private designer?: Designer;
@@ -136,6 +130,7 @@ throw new Error('Method not implemented.');
   selectedDaysValue: any;
   selectedHoursValue: any;
   selectedBasedOnValue: any;
+  print:any;
 
   data: PickerDataModel[] = [
     {
@@ -227,61 +222,42 @@ throw new Error('Method not implemented.');
     },
   };
   public readonly validatorConfiguration: ValidatorConfiguration = {
-    step: (step: Step) =>
-      !!step.name &&
-      (/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(
-        step.properties['mailFrom'] as string
-      ) as boolean),
+    step: (step: Step) => {
+      if (!!step.name &&
+        (/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(
+          step.properties['mailFrom'] as string
+        ) as boolean)) {
+        step.properties['isValid'] = true;
+        return true
+      }
+      return false
+    },
     root: (definition: Definition) =>
-      definition.properties['mailFrom'] == '' &&
-      definition.properties['scheduledTime'] == '' &&
-      definition.properties['emailTemplate'] == '',
+      definition.properties['CadenceName'] == '' 
   };
 
   public ngOnInit() {
     this.updateDefinitionJSON();
-    const malaysianBanks: PickerValueModel[] = [
-      { label: '01', value: 'MBB' },
-      { label: '01', value: 'CIMB' },
-      { label: '01', value: 'PBB' },
-      { label: '01', value: 'RHB' },
-      { label: '01', value: 'HLB' },
-      { label: '01', value: 'AMB' },
-      { label: '01', value: 'BIMB' },
-      { label: '01', value: 'OCBC' },
-      { label: '01', value: 'HSBC' },
-      { label: '01', value: 'SCB' },
-    ];
-    const indianBanks: PickerValueModel[] = [
-      { label: 'Maybank', value: 'MBB' },
-      { label: 'CIMB Bank', value: 'CIMB' },
-      { label: 'Public Bank', value: 'PBB' },
-      { label: 'RHB Bank', value: 'RHB' },
-      { label: 'Hong Leong Bank', value: 'HLB' },
-      { label: 'AmBank', value: 'AMB' },
-      { label: 'Bank Islam Malaysia', value: 'BIMB' },
-      { label: 'OCBC Bank', value: 'OCBC' },
-      { label: 'HSBC Bank Malaysia', value: 'HSBC' },
-      { label: 'Standard Chartered Bank Malaysia', value: 'SCB' },
-    ];
-    const canadianBanks: PickerValueModel[] = [
-      { label: 'Maybank', value: 'MBB' },
-      { label: 'CIMB Bank', value: 'CIMB' },
-      { label: 'Public Bank', value: 'PBB' },
-      { label: 'RHB Bank', value: 'RHB' },
-      { label: 'Hong Leong Bank', value: 'HLB' },
-      { label: 'AmBank', value: 'AMB' },
-      { label: 'Bank Islam Malaysia', value: 'BIMB' },
-      { label: 'OCBC Bank', value: 'OCBC' },
-      { label: 'HSBC Bank Malaysia', value: 'HSBC' },
-      { label: 'Standard Chartered Bank Malaysia', value: 'SCB' },
-    ];
 
-    this.data[0].list = malaysianBanks;
+    const hours: any[] = Array.from({ length: 100 }, (_, i) => ({
+      label: (i + 1).toString(),
+      value: i + 1
+    }));
+    const days: any[] = Array.from({ length: 24 }, (_, i) => ({
+      label: (i + 1).toString(),
+      value: i + 1
+    }));
+    const basedon: PickerValueModel[] = [
+      { label: 'Before due date', value: 'Before due date' },
+      { label: 'After due date', value: 'After due date' },
+      { label: 'After invoice creation', value: 'After invoice creation' },
+
+    ];
+    this.data[0].list = hours;
     this.selectedDaysValue = this.data[0].list[0].value;
-    this.hours[0].list = indianBanks;
+    this.hours[0].list = days;
     this.selectedHoursValue = this.hours[0].list[0].value;
-    this.basedon[0].list = canadianBanks;
+    this.basedon[0].list = basedon;
     this.selectedBasedOnValue = this.basedon[0].list[0].value;
   }
 
@@ -305,10 +281,9 @@ throw new Error('Method not implemented.');
     const length = this.definition.sequence.length.valueOf();
     //console.log(this.definition.sequence.length.valueOf());
     this.visible = true;
-    this.getInvalidStep();
-    this.selectedStep = null;
-    let step = this.definition.sequence.find(f =>  f.id == this.selectedStepId);
-    if(step) this.selectedStep = step;
+    //this.getInvalidStep();
+    let step = this.definition.sequence.find(f => f.id == this.selectedStepId);
+    if (step) this.selectedStep = step;
 
     // for (let i = 0; i < length; i++) {
     //   if (this.definition.sequence[i].id === this.selectedStepId) {
@@ -342,6 +317,12 @@ throw new Error('Method not implemented.');
     event: Event,
     context: RootEditorContext | StepEditorContext
   ) {
+
+    if((event.target as HTMLInputElement).type == 'checkbox')
+      {
+        properties[name] = (event.target as HTMLInputElement).checked;
+        return
+      }
     properties[name] = (event.target as HTMLInputElement).value;
     context.notifyPropertiesChanged();
   }
@@ -351,7 +332,7 @@ throw new Error('Method not implemented.');
     name: string,
     event: any,
     context: any,
-    isNameChanges:boolean = false
+    isNameChanges: boolean = false
   ) {
 
     let seqns = editor.definition?.sequence;
@@ -361,7 +342,7 @@ throw new Error('Method not implemented.');
     let seq = seqns.find((f: any) => f.id == step.id);
     if (seq) {
       seq[name] = event.target.value;
-      if(isNameChanges)
+      if (isNameChanges)
         context.notifyNameChanged();
       else
         context.notifyPropertiesChanged();
@@ -395,52 +376,60 @@ throw new Error('Method not implemented.');
   }
 
   private updateDefinitionJSON() {
-    this.getInvalidStep();
+    
     this.ngZone.run(() => {
       this.definitionJSON = JSON.stringify(this.definition, null, 2);
       this.cdr.detectChanges();
+      this.getInvalidStep();
     })
-    
+
   }
   private getInvalidStep() {
-    var elements = document.querySelectorAll('.sqd-step-task') as NodeListOf<Element>;;
-    var matchedElement: any = null;
-    // Loop through each element
-    elements.forEach((element: any) => {
-      // Check if the element has the data-step-id attribute
-      if (element.hasAttribute('data-step-id')) {
-        // Get the value of the data-step-id attribute
+   
+    this.definition.sequence.forEach(seq => {
+      var elements = document.querySelectorAll('.sqd-step-task') as NodeListOf<Element>;;
+      var matchedElement: any = null;
+      // Loop through each element
+      elements.forEach((element: any) => {
         var stepId = element.getAttribute('data-step-id');
-        // Compare the attribute value with the provided ID value
-        this.definition.sequence.forEach(seq => {
-          if(!seq.properties['isValid']){
-            this.changeStepColor(matchedElement)
+        if(stepId === this.selectedStepId){
+          matchedElement = element;
+          var rectElement = matchedElement.querySelector('rect') as HTMLElement;
+          if (rectElement) {
+            // Change the style fill to aqua
+            console.log('reached')
+            if (!seq.properties['isValid']) {
+              rectElement.style.fill = 'red';
+            } // Use setAttribute to change SVG fill
+            else {
+              rectElement.style.fill = 'green';
+            }
           }
-        });
-        if (stepId === this.selectedStepId) {
-          matchedElement = element; // Found the matching element
-          return; // Exit the loop early since we found the match
+
         }
-      }
+      })
     });
-    if (matchedElement)
-      this.changeStepColor(matchedElement);
+   
+
 
    
+      // Check if the element has the data-step-id attribute
+    //  if (element.hasAttribute('data-step-id')) {
+        // Get the value of the data-step-id attribute
+     //  
+        // Compare the attribute value with the provided ID value
+         // if () {
+        //   matchedElement = element; // Found the matching element
+       
+        //   return // Exit the loop early since we found the match
+        // }
+      
+   // });
   }
 
-  changeStepColor(matchedElement:any){
+  changeStepColor(matchedElement: any, isSkippable?: boolean) {
     if (matchedElement) {
-      var rectElement = matchedElement.querySelector('rect') as HTMLElement;
-      if (rectElement) {
-        // Change the style fill to aqua
-        if (this.isValid) {
-          rectElement.style.fill = 'green';
-        } // Use setAttribute to change SVG fill
-        else {
-          rectElement.style.fill = 'red';
-        }
-      }
+
     }
   }
 
@@ -461,34 +450,7 @@ throw new Error('Method not implemented.');
     this.mailcontent = false;
   }
 
-  show() {
-    console.log(this.definition.sequence.length);
-    this.ref = this.dialogService.open(this.ProductListDemo, {
-      header: 'Select a Product',
-      width: '70%',
-      contentStyle: { overflow: 'auto' },
-      baseZIndex: 10000,
-      maximizable: true,
-    });
 
-    this.ref.onClose.subscribe((product: any) => {
-      if (product) {
-        this.messageService.add({
-          severity: 'info',
-          summary: 'Product Selected',
-          detail: product.name,
-        });
-      }
-    });
-
-    this.ref.onMaximize.subscribe((value) => {
-      this.messageService.add({
-        severity: 'info',
-        summary: 'Maximized',
-        detail: `maximized: ${value.maximized}`,
-      });
-    });
-  }
 
   toggleCheckbox(event: any) {
     this.toggle = !this.toggle;
@@ -518,11 +480,24 @@ throw new Error('Method not implemented.');
 
   dayschange(res: PickerResponseModel) {
     this.selectedDaysValue = this.data[res.gIndex].list[res.iIndex].value;
+    this.setEmailTrigger();
   }
   hourschange(res: PickerResponseModel) {
     this.selectedHoursValue = this.hours[res.gIndex].list[res.iIndex].value;
+    this.setEmailTrigger()
   }
   basedonchange(res: PickerResponseModel) {
     this.selectedBasedOnValue = this.basedon[res.gIndex].list[res.iIndex].value;
+    this.setEmailTrigger()
+  }
+
+  setEmailTrigger() {
+    let seq = this.definition.sequence.find((f: any) => f.id == this.selectedStepId);
+    if(!seq) return;
+    seq.properties['Days'] = this.selectedDaysValue;
+    seq.properties['Hour'] = this.selectedHoursValue;
+    seq.properties['RunBasedOn'] = this.selectedBasedOnValue;
+    seq.properties['Minute'] = 0;
+    seq.properties['ScheduledTime'] = `${this.selectedDaysValue} Days ${this.selectedHoursValue} Hours ${this.selectedBasedOnValue}`
   }
 }

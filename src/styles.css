@@ -213,8 +213,3 @@ textarea {
   border-top: 1px #ececec solid;
   border-bottom: 1px #ececec solid;
 }
-
-
-.config_modal .p-dialog .p-dialog-header {
-  padding-bottom: 0% !important;
-}

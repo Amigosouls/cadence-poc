@@ -10,41 +10,13 @@
   </sqd-designer>
 
   <ng-template #rootEditor let-editor>
-    <!-- <h2>Root Editor</h2>
-
-
-  <h3>Test Data</h3>
-  <mat-form-field class="full-width">
-    <input matInput type="number" [value]="editor.definition.properties.testData" [readonly]="editor.isReadonly"
-      (input)="
-        updateProperty(
-          editor.definition.properties,
-          'testData',
-          $event,
-          editor.context
-        )
-      " />
-  </mat-form-field> -->
-
-    <!-- <h3>Test Data</h3>
-  <mat-form-field class="full-width">
-    <input matInput type="number" [value]="editor.definition.properties.testData" [readonly]="editor.isReadonly"
-      (input)="
-        updateProperty(
-          editor.definition.properties,
-          'testData',
-          $event,
-          editor.context
-        )
-      " />
-  </mat-form-field> -->
+  
   </ng-template>
 
   <ng-template #stepEditor let-editor>
     <span class="config_modal">
     <p-dialog header="Set Configuration" [modal]="true" [(visible)]="visible" [style]="{ width: '50rem' }"
       [draggable]="false" (onHide)="toggleSelectedStepClicked()" (onShow)="reflectChanges()">
-     
       <span class="p-float-label flex gap-2 flex-column">
         <label>Step Name</label>
         <input id="stepName" pInputText type="text" class="p-inputtext-sm w-20rem" [(ngModel)]="selectedStep.name"
@@ -61,11 +33,11 @@
       <div class="flex flex-row gap-3 mt-4">
         <span class="p-float-label w-full flex gap-2 flex-column">
           <label>Email From</label>
-          <input pInputText type="text" class="p-inputtext-sm w-full" [value]="editor.step.properties.mailFrom"
+          <input pInputText type="text" class="p-inputtext-sm w-full" [value]="editor.step.properties.FromEmail"
             [readonly]="editor.isReadonly" (input)="
             updateProperty(
               editor.step.properties,
-              'mailFrom',
+              'FromEmail',
               $event,
               editor.context
             )
@@ -73,38 +45,59 @@
         </span>
         <span class="p-float-label w-full flex gap-2 flex-column">
           <label>Email To</label>
-          <input pInputText type="text" class="p-inputtext-sm w-full" [value]="editor.step.properties.mailTo"
+          <input pInputText type="text" class="p-inputtext-sm w-full" [value]="editor.step.properties.ToEmail"
             [readonly]="editor.isReadonly" (input)="
             updateProperty(
               editor.step.properties,
-              'mailTo',
+              'ToEmail',
               $event,
               editor.context
             )
           " />
         </span>
       </div>
+      <div class="flex flex-row gap-3 mt-2">
+        <span class="flex flex-column gap-2 w-full">
+          <label>Cc</label>
+          <input pInputText type="text" class="p-inputtext-sm w-full" [value]="editor.step.properties.CcEmail"
+            [readonly]="editor.isReadonly" (input)="
+            updateProperty(
+              editor.step.properties,
+              'CcEmail',
+              $event,
+              editor.context
+            )
+          " />
+        </span>
+        <div class="flex flex-column gap-2 w-full">
+          <label>Bcc</label>
+            <input pInputText type="text" class="p-inputtext-sm w-full" [value]="editor.step.properties.BccEmail"
+              [readonly]="editor.isReadonly" (input)="
+              updateProperty(
+                editor.step.properties,
+                'BccEmail',
+                $event,
+                editor.context
+              )
+            " />
+        </div>
+      </div>
+      
 
       <div class="flex flex-row gap-3 mt-4">
         <span class="flex w-full flex-column">
           <span class="flex w-full flex-column gap-2">
           <label for="date">Email trigger schedule</label>
-          <input appendTo="body" pInputText type="text" class="p-inputtext-sm w-full"
-            [value]="editor.step.properties.scheduledTime" (input)="
+          <input appendTo="body" pInputText type="text" class="p-inputtext-sm w-full" [readOnly]="true"
+            [value]="editor.step.properties.ScheduledTime" (input)="
             updateProperty(
               editor.step.properties,
-              'scheduledTime',
+              'ScheduledTime',
               $event,
               editor.context
             )
           " /></span>
            <div class="flex flex-column align-items-center">
-            <!-- <div class="flex w-19rem flex-row gap-2 p-3 text-white"
-              style="border: 1px rgb(255, 255, 255) solid;border-bottom: 0;border-top-right-radius: 5px;border-top-left-radius: 5px;background-color: #03b19e;">
-              <span><b>{{selectedDaysValue}}</b></span>
-              <span><b>{{selectedHoursValue}}</b></span>
-              <span><b>{{selectedBasedOnValue}}</b></span>
-            </div> -->
             <div
               style="border: 1px #CED4DA solid;border-top: 0% !important;background-color: #ffffff;width: 100%;border-radius: 5px;">
               <div class="flex flex-row justify-content-center gap-3 scroll_value">
@@ -115,12 +108,12 @@
                 </span>
                 <span class="w-5rem flex flex-column text-center">
                   <div class="pt-2">Hours</div>
-                  <ng-scroll-picker [style]="{'margin':'.5em 0em'}" [data]="data"
+                  <ng-scroll-picker [style]="{'margin':'.5em 0em'}" [data]="hours"
                     (change)="hourschange($event)"></ng-scroll-picker>
                 </span>
-                <span class="w-5rem flex flex-column text-center">
+                <span class="w-10rem flex flex-column text-center">
                   <div class="pt-2">Based On</div>
-                  <ng-scroll-picker [style]="{'margin':'.5em 0em'}" [data]="data"
+                  <ng-scroll-picker [style]="{'margin':'.5em 0em'}" [data]="basedon"
                     (change)="basedonchange($event)"></ng-scroll-picker>
                 </span>
               </div>
@@ -131,10 +124,10 @@
         <div class="w-full gap-2" [ngClass]="toggle ? 'hidden ':'flex flex-column'">
           <label for="">Template</label>
           <select class="p-inputtext-sm w-full" pInputText optionLabel="name"
-            [value]="editor.step.properties.emailTemplate" (input)="
+            [value]="editor.step.properties.MailTemplateId" (input)="
           updateProperty(
             editor.step.properties,
-            'emailTemplate',
+            'MailTemplateId',
             $event,
             editor.context
           )
@@ -144,15 +137,32 @@
           </select>
         </div>
       </div>
-
-      <span class="flex flex-column gap-2 mt-1">
-        <div class="mb-3 form-check">
-          <input type="checkbox" class="form-check-input" id="check1" [checked]="toggle"
-            (change)="toggleCheckbox($event)" />
-          <label class="form-check-label" for="check1">IsCustomTemplate</label>
+      <div class="flex flex-row gap-3 mt-4">
+        <div class="flex flex-row gap-2 w-full">
+          <label>Attach Invoice PDF?</label>{{print}}
+            <input  type="checkbox" class="" [checked]="editor.step.properties.IsAttachInvoicePdf"
+              [readonly]="editor.isReadonly" (change)="
+              updateProperty(
+                editor.step.properties,
+                'IsAttachInvoicePdf',
+                $event,
+                editor.context
+              )
+            " />
         </div>
-      </span>
-
+        <div class="flex flex-row gap-2 w-full">
+          <label>Attach Invoice Documents?</label>
+            <input  type="checkbox" class="" [checked]="editor.step.properties.IsAttachInvoiceDocuments"
+              [readonly]="editor.isReadonly" (input)="
+              updateProperty(
+                editor.step.properties,
+                'IsAttachInvoiceDocuments',
+                $event,
+                editor.context
+              )
+            " />
+        </div>
+      </div>
       <div class="container" [hidden]="!toggle">
         <div class="text-black p-3" draggable="true" (dragstart)="onDragStart($event, '#Customer_Name#')">
           #Customer_Name#
