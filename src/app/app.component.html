@@ -15,12 +15,13 @@
 
   <ng-template #stepEditor let-editor>
     <span class="config_modal">
-    <p-dialog header="Set Configuration" [modal]="true" [(visible)]="visible" [style]="{ width: '50rem' }"
-      [draggable]="false" (onHide)="toggleSelectedStepClicked()" (onShow)="reflectChanges()">
-      <span class="p-float-label flex gap-2 flex-column">
-        <label>Step Name</label>
-        <input id="stepName" pInputText type="text" class="p-inputtext-sm w-20rem" [(ngModel)]="selectedStep.name"
-          (blur)="
+      <p-dialog header="Set Configuration" [modal]="true" [(visible)]="visible" [style]="{ width: '30rem' }"
+        [draggable]="false" (onHide)="toggleSelectedStepClicked()" (onShow)="reflectChanges()">
+        <div class="flex flex-column gap-3">
+          <span class="p-float-label w-full flex gap-2 flex-column">
+            <label>Step Name</label>
+            <input id="stepName" pInputText type="text" class="p-inputtext-sm w-full" [(ngModel)]="selectedStep.name"
+              (blur)="
             updateStepName(
               editor,
               'name',
@@ -176,9 +177,9 @@
         <h4>Custom Template Editor</h4>
         <angular-editor [config]="config" (focus)="onEditorFocus($event)"
           (blur)="onEditorBlur($event)"></angular-editor>
-      </div>
-    </p-dialog>
-  </span>
+      </div> -->
+      </p-dialog>
+    </span>
 
     <!-- 
     <mat-tab-group>
