@@ -10,14 +10,184 @@
   </sqd-designer>
 
   <ng-template #rootEditor let-editor>
-  
+
   </ng-template>
 
   <ng-template #stepEditor let-editor>
     <span class="config_modal">
-      <p-dialog header="Set Configuration" [modal]="true" [(visible)]="visible" [style]="{ width: '30rem' }"
+      <p-dialog header="Set Configuration" [modal]="true" [(visible)]="visible" [style]="{ width: '50rem' }"
         [draggable]="false" (onHide)="toggleSelectedStepClicked()" (onShow)="reflectChanges()">
-        <div class="flex flex-column gap-3">
+        <div class="flex flex-column gap-2">
+
+          <div class="flex gap-3">
+            <span class="p-float-label w-full flex gap-2 flex-column">
+              <label>Step Name</label>
+              <input id="stepName" pInputText type="text" class="p-inputtext-sm w-full" [(ngModel)]="selectedStep.name"
+                (blur)="
+              updateStepName(
+              editor,
+              'name',
+              $event,
+              editor.context,
+              true
+            );
+          " />
+            </span>
+            <div class="w-full gap-2" [ngClass]="toggle ? 'hidden ':'flex flex-column'">
+              <label for="">Template</label>
+              <select class="p-inputtext-sm w-full" pInputText optionLabel="name"
+                [value]="editor.step.properties.MailTemplateId" (input)="
+        updateProperty(
+          editor.step.properties,
+          'MailTemplateId',
+          $event,
+          editor.context
+        )
+      ">
+                <option value="1">First Follow up</option>
+                <option value="2">Second Follow up</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex gap-3">
+            <span class="p-float-label w-full flex gap-2 flex-column">
+              <label>Email From</label>
+              <input pInputText type="text" class="p-inputtext-sm w-full" [value]="editor.step.properties.FromEmail"
+                [readonly]="editor.isReadonly" (input)="
+            updateProperty(
+              editor.step.properties,
+              'FromEmail',
+              $event,
+              editor.context
+            )
+          " />
+            </span>
+            <span class="p-float-label w-full flex gap-2 flex-column">
+              <label>Email To</label>
+              <input pInputText type="text" class="p-inputtext-sm w-full" [value]="editor.step.properties.ToEmail"
+                [readonly]="editor.isReadonly" (input)="
+            updateProperty(
+              editor.step.properties,
+              'ToEmail',
+              $event,
+              editor.context
+            )
+          " />
+            </span>
+          </div>
+
+          <div class="flex gap-3">
+            <span class="flex flex-column gap-2 w-full">
+              <label>Cc</label>
+              <input pInputText type="text" class="p-inputtext-sm w-full" [value]="editor.step.properties.CcEmail"
+                [readonly]="editor.isReadonly" (input)="
+            updateProperty(
+              editor.step.properties,
+              'CcEmail',
+              $event,
+              editor.context
+            )
+          " />
+            </span>
+
+            <div class="flex flex-column gap-2 w-full">
+              <label>Bcc</label>
+              <input pInputText type="text" class="p-inputtext-sm w-full" [value]="editor.step.properties.BccEmail"
+                [readonly]="editor.isReadonly" (input)="
+              updateProperty(
+                editor.step.properties,
+                'BccEmail',
+                $event,
+                editor.context
+              )
+            " />
+            </div>
+          </div>
+
+
+          <span class="flex w-full flex-column">
+            <span class="flex w-full flex-column gap-2">
+              <label for="date">Email trigger schedule</label>
+              <input appendTo="body" pInputText type="text" class="p-inputtext-sm w-full" [readOnly]="true"
+                [value]="editor.step.properties.ScheduledTime" (input)="
+              updateProperty(
+                editor.step.properties,
+                'ScheduledTime',
+                $event,
+                editor.contextF
+              )
+            " /></span>
+            <div class="flex flex-column align-items-center">
+              <div
+                style="border: 1px #CED4DA solid;border-top: 0% !important;background-color: #ffffff;width: 100%;border-radius: 5px;">
+                <div class="flex flex-row justify-content-center gap-3 scroll_value">
+                  <span class="w-5rem flex flex-column text-center">
+                    <div class="pt-2">Days</div>
+                    <ng-scroll-picker [style]="{'margin':'.5em 0em'}" [data]="data"
+                      (change)="dayschange($event)"></ng-scroll-picker>
+                  </span>
+                  <span class="w-5rem flex flex-column text-center">
+                    <div class="pt-2">Hours</div>
+                    <ng-scroll-picker [style]="{'margin':'.5em 0em'}" [data]="hours"
+                      (change)="hourschange($event)"></ng-scroll-picker>
+                  </span>
+                  <span class="w-10rem flex flex-column text-center">
+                    <div class="pt-2">Based On</div>
+                    <ng-scroll-picker [style]="{'margin':'.5em 0em'}" [data]="basedon"
+                      (change)="basedonchange($event)"></ng-scroll-picker>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </span>
+
+          <div class="flex flex-row align-items-center gap-1 w-full">
+            <input type="checkbox" class="" [checked]="editor.step.properties.IsAttachInvoicePdf"
+              [readonly]="editor.isReadonly" (change)="
+            updateProperty(
+              editor.step.properties,
+              'IsAttachInvoicePdf',
+              $event,
+              editor.context
+            )
+          " />
+            <label>Attach Invoice PDF?</label>{{print}}
+          </div>
+
+          <div class="flex flex-row align-items-center gap-1 w-full">
+            <input type="checkbox" class="" [checked]="editor.step.properties.IsAttachInvoiceDocuments"
+              [readonly]="editor.isReadonly" (input)="
+              updateProperty(
+                editor.step.properties,
+                'IsAttachInvoiceDocuments',
+                $event,
+                editor.context
+              )
+            " />
+            <label>Attach Invoice Documents?</label>
+          </div>
+
+        </div>
+
+        <!-- <div class="container" [hidden]="!toggle">
+          <div class="text-black p-3" draggable="true" (dragstart)="onDragStart($event, '#Customer_Name#')">
+            #Customer_Name#
+          </div>
+          <div class="text-black p-3" draggable="true" (dragstart)="onDragStart($event, '#Invoice_Number#')">
+            #Invoice_Number#
+          </div>
+          <div class="text-black p-3" draggable="true" (dragstart)="onDragStart($event, '#Balance_Amount#')">
+            #Balance_Amount#
+          </div>
+          <h4>Custom Template Editor</h4>
+          <angular-editor [config]="config" (focus)="onEditorFocus($event)"
+            (blur)="onEditorBlur($event)"></angular-editor>
+        </div> -->
+      </p-dialog>
+      <!-- <p-dialog header="Set Configuration" [modal]="true" [(visible)]="visible" [style]="{ width: '30rem' }"
+        [draggable]="false" (onHide)="toggleSelectedStepClicked()" (onShow)="reflectChanges()">
+        <div class="flex flex-column gap-2">
           <span class="p-float-label w-full flex gap-2 flex-column">
             <label>Step Name</label>
             <input id="stepName" pInputText type="text" class="p-inputtext-sm w-full" [(ngModel)]="selectedStep.name"
@@ -30,13 +200,27 @@
               true
             );
           " />
-      </span>
-        </div>
-      <div class="flex flex-row gap-3 mt-4">
-        <span class="p-float-label w-full flex gap-2 flex-column">
-          <label>Email From</label>
-          <input pInputText type="text" class="p-inputtext-sm w-full" [value]="editor.step.properties.FromEmail"
-            [readonly]="editor.isReadonly" (input)="
+          </span>
+          <div class="w-full gap-2" [ngClass]="toggle ? 'hidden ':'flex flex-column'">
+            <label for="">Template</label>
+            <select class="p-inputtext-sm w-full" pInputText optionLabel="name"
+              [value]="editor.step.properties.MailTemplateId" (input)="
+        updateProperty(
+          editor.step.properties,
+          'MailTemplateId',
+          $event,
+          editor.context
+        )
+      ">
+              <option value="1">First Follow up</option>
+              <option value="2">Second Follow up</option>
+            </select>
+          </div>
+
+          <span class="p-float-label w-full flex gap-2 flex-column">
+            <label>Email From</label>
+            <input pInputText type="text" class="p-inputtext-sm w-full" [value]="editor.step.properties.FromEmail"
+              [readonly]="editor.isReadonly" (input)="
             updateProperty(
               editor.step.properties,
               'FromEmail',
@@ -44,11 +228,11 @@
               editor.context
             )
           " />
-        </span>
-        <span class="p-float-label w-full flex gap-2 flex-column">
-          <label>Email To</label>
-          <input pInputText type="text" class="p-inputtext-sm w-full" [value]="editor.step.properties.ToEmail"
-            [readonly]="editor.isReadonly" (input)="
+          </span>
+          <span class="p-float-label w-full flex gap-2 flex-column">
+            <label>Email To</label>
+            <input pInputText type="text" class="p-inputtext-sm w-full" [value]="editor.step.properties.ToEmail"
+              [readonly]="editor.isReadonly" (input)="
             updateProperty(
               editor.step.properties,
               'ToEmail',
@@ -56,13 +240,12 @@
               editor.context
             )
           " />
-        </span>
-      </div>
-      <div class="flex flex-row gap-3 mt-2">
-        <span class="flex flex-column gap-2 w-full">
-          <label>Cc</label>
-          <input pInputText type="text" class="p-inputtext-sm w-full" [value]="editor.step.properties.CcEmail"
-            [readonly]="editor.isReadonly" (input)="
+          </span>
+
+          <span class="flex flex-column gap-2 w-full">
+            <label>Cc</label>
+            <input pInputText type="text" class="p-inputtext-sm w-full" [value]="editor.step.properties.CcEmail"
+              [readonly]="editor.isReadonly" (input)="
             updateProperty(
               editor.step.properties,
               'CcEmail',
@@ -70,9 +253,10 @@
               editor.context
             )
           " />
-        </span>
-        <div class="flex flex-column gap-2 w-full">
-          <label>Bcc</label>
+          </span>
+
+          <div class="flex flex-column gap-2 w-full">
+            <label>Bcc</label>
             <input pInputText type="text" class="p-inputtext-sm w-full" [value]="editor.step.properties.BccEmail"
               [readonly]="editor.isReadonly" (input)="
               updateProperty(
@@ -82,80 +266,60 @@
                 editor.context
               )
             " />
-        </div>
-      </div>
-      <div class="flex flex-row gap-3 mt-4">
-        <span class="flex w-full flex-column">
-          <span class="flex w-full flex-column gap-2">
-          <label for="date">Email trigger schedule</label>
-          <input appendTo="body" pInputText type="text" class="p-inputtext-sm w-full" [readOnly]="true"
-            [value]="editor.step.properties.ScheduledTime" (input)="
-            updateProperty(
-              editor.step.properties,
-              'ScheduledTime',
-              $event,
-              editor.contextF
-            )
-          " /></span>
-           <div class="flex flex-column align-items-center">
-            <div
-              style="border: 1px #CED4DA solid;border-top: 0% !important;background-color: #ffffff;width: 100%;border-radius: 5px;">
-              <div class="flex flex-row justify-content-center gap-3 scroll_value">
-                <span class="w-5rem flex flex-column text-center">
-                  <div class="pt-2">Days</div>
-                  <ng-scroll-picker [style]="{'margin':'.5em 0em'}" [data]="data"
-                    (change)="dayschange($event)"></ng-scroll-picker>
-                </span>
-                <span class="w-5rem flex flex-column text-center">
-                  <div class="pt-2">Hours</div>
-                  <ng-scroll-picker [style]="{'margin':'.5em 0em'}" [data]="hours"
-                    (change)="hourschange($event)"></ng-scroll-picker>
-                </span>
-                <span class="w-10rem flex flex-column text-center">
-                  <div class="pt-2">Based On</div>
-                  <ng-scroll-picker [style]="{'margin':'.5em 0em'}" [data]="basedon"
-                    (change)="basedonchange($event)"></ng-scroll-picker>
-                </span>
-              </div>
-            </div>
           </div>
-        </span>
 
-        <div class="w-full gap-2" [ngClass]="toggle ? 'hidden ':'flex flex-column'">
-         <div class="flex-row justify-content-between gap-2 flex">
-          <label for="">Template</label>
-          <button (click)="addTemplate =true;" class="p-1 bg-blue-600 border-none border-round">+</button>
-         </div>
-          <select class="p-inputtext-sm w-full" pInputText optionLabel="name"
-            [value]="editor.step.properties.MailTemplateId" (input)="
-          updateProperty(
-            editor.step.properties,
-            'MailTemplateId',
-            $event,
-            editor.context
-          )
-        ">
-            <option value="1">First Follow up</option>
-            <option value="2">Second Follow up</option>
-          </select>
-        </div>
-      </div>
-      <div class="flex flex-row gap-3 mt-4">
-        <div class="flex flex-row gap-2 w-full">
-          <label>Attach Invoice PDF?</label>{{print}}
-            <input  type="checkbox" class="" [checked]="editor.step.properties.IsAttachInvoicePdf"
-              [readonly]="editor.isReadonly" (change)="
+
+          <span class="flex w-full flex-column">
+            <span class="flex w-full flex-column gap-2">
+              <label for="date">Email trigger schedule</label>
+              <input appendTo="body" pInputText type="text" class="p-inputtext-sm w-full" [readOnly]="true"
+                [value]="editor.step.properties.ScheduledTime" (input)="
               updateProperty(
                 editor.step.properties,
-                'IsAttachInvoicePdf',
+                'ScheduledTime',
                 $event,
-                editor.context
+                editor.contextF
               )
-            " />
-        </div>
-        <div class="flex flex-row gap-2 w-full">
-          <label>Attach Invoice Documents?</label>
-            <input  type="checkbox" class="" [checked]="editor.step.properties.IsAttachInvoiceDocuments"
+            " /></span>
+            <div class="flex flex-column align-items-center">
+              <div
+                style="border: 1px #CED4DA solid;border-top: 0% !important;background-color: #ffffff;width: 100%;border-radius: 5px;">
+                <div class="flex flex-row justify-content-center gap-3 scroll_value">
+                  <span class="w-5rem flex flex-column text-center">
+                    <div class="pt-2">Days</div>
+                    <ng-scroll-picker [style]="{'margin':'.5em 0em'}" [data]="data"
+                      (change)="dayschange($event)"></ng-scroll-picker>
+                  </span>
+                  <span class="w-5rem flex flex-column text-center">
+                    <div class="pt-2">Hours</div>
+                    <ng-scroll-picker [style]="{'margin':'.5em 0em'}" [data]="hours"
+                      (change)="hourschange($event)"></ng-scroll-picker>
+                  </span>
+                  <span class="w-10rem flex flex-column text-center">
+                    <div class="pt-2">Based On</div>
+                    <ng-scroll-picker [style]="{'margin':'.5em 0em'}" [data]="basedon"
+                      (change)="basedonchange($event)"></ng-scroll-picker>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </span>
+
+          <div class="flex flex-row align-items-center gap-1 w-full">
+            <input type="checkbox" class="" [checked]="editor.step.properties.IsAttachInvoicePdf"
+              [readonly]="editor.isReadonly" (change)="
+            updateProperty(
+              editor.step.properties,
+              'IsAttachInvoicePdf',
+              $event,
+              editor.context
+            )
+          " />
+            <label>Attach Invoice PDF?</label>{{print}}
+          </div>
+
+          <div class="flex flex-row align-items-center gap-1 w-full">
+            <input type="checkbox" class="" [checked]="editor.step.properties.IsAttachInvoiceDocuments"
               [readonly]="editor.isReadonly" (input)="
               updateProperty(
                 editor.step.properties,
@@ -164,10 +328,38 @@
                 editor.context
               )
             " />
+            <label>Attach Invoice Documents?</label>
+          </div>
+
         </div>
-      </div>
-     
-      </p-dialog>
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="container" [hidden]="!toggle">
+          <div class="text-black p-3" draggable="true" (dragstart)="onDragStart($event, '#Customer_Name#')">
+            #Customer_Name#
+          </div>
+          <div class="text-black p-3" draggable="true" (dragstart)="onDragStart($event, '#Invoice_Number#')">
+            #Invoice_Number#
+          </div>
+          <div class="text-black p-3" draggable="true" (dragstart)="onDragStart($event, '#Balance_Amount#')">
+            #Balance_Amount#
+          </div>
+          <h4>Custom Template Editor</h4>
+          <angular-editor [config]="config" (focus)="onEditorFocus($event)"
+            (blur)="onEditorBlur($event)"></angular-editor>
+        </div>
+      </p-dialog> -->
     </span>
 
     <!-- 
