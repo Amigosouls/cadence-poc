@@ -1,0 +1,25 @@
+
+<div class="flex flex-column gap-2">
+    <label for="templateName">Template Name</label>
+    <input  pInputText type="text" id="templateName" class="p-inputtext-sm w-full">
+</div>
+
+<div class="flex flex-column gap-2 mt-2">
+    <label for="subject">Subject</label>
+    <input  pInputText type="text" id="subject" class="p-inputtext-sm w-full">
+</div>
+
+<div class="container" >
+    <div class="text-black p-3" draggable="true" (dragstart)="onDragStart($event, '#Customer_Name#')">
+      #Customer_Name#
+    </div>
+    <div class="text-black p-3" draggable="true" (dragstart)="onDragStart($event, '#Invoice_Number#')">
+      #Invoice_Number#
+    </div>
+    <div class="text-black p-3" draggable="true" (dragstart)="onDragStart($event, '#Balance_Amount#')">
+      #Balance_Amount#
+    </div>
+    <h4>Template</h4>
+    <angular-editor [config]="config" (focus)="onEditorFocus($event)"
+      (blur)="onEditorBlur($event)"></angular-editor>
+  </div>

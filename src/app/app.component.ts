@@ -1,5 +1,4 @@
 import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
-import { AngularEditorConfig } from '@kolkov/angular-editor';
 
 import {
   Definition,
@@ -55,7 +54,7 @@ function createMail(): Step {
     componentType: 'task',
     name: 'Mail',
     type: 'Mail',
-    properties: { FromEmail: '', Days: '',Minute:'' ,Hour: '', RunBasedOn: '', ToEmail: '',MailTemplateId:'' ,CcEmail:'',BccEmail:'',IsAttachInvoicePdf:null,IsAttachInvoiceDocuments:null,ScheduledTime:'',isValid: false },
+    properties: { FromEmail: '', Days: '',Minute:'' ,Hour: '', RunBasedOn: '', ToEmail: '',MailTemplateId:'' ,CcEmail:'',BccEmail:'',IsAttachInvoicePdf:false,IsAttachInvoiceDocuments:false,ScheduledTime:'',isValid: false },
   };
 }
 
@@ -85,33 +84,6 @@ function createDefinition(): Definition {
 })
 export class AppComponent implements OnInit {
 
-  config: AngularEditorConfig = {
-    editable: true,
-    spellcheck: true,
-    height: '15rem',
-    minHeight: '5rem',
-    placeholder: 'Enter text here...',
-    translate: 'no',
-    defaultParagraphSeparator: 'p',
-    defaultFontName: 'Arial',
-    toolbarHiddenButtons: [['bold']],
-    customClasses: [
-      {
-        name: 'quote',
-        class: 'quote',
-      },
-      {
-        name: 'redText',
-        class: 'redText',
-      },
-      {
-        name: 'titleText',
-        class: 'titleText',
-        tag: 'h1',
-      },
-    ],
-  };
-
   selectedStep: any = {};
 
   toggle: boolean = false;
@@ -126,7 +98,7 @@ export class AppComponent implements OnInit {
   public visible: boolean = false;
   stepName: string = '';
   mailcontent: boolean = false;
-  cursorPosition: any;
+
   selectedDaysValue: any;
   selectedHoursValue: any;
   selectedBasedOnValue: any;
@@ -183,7 +155,7 @@ export class AppComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     public messageService: MessageService
   ) { }
-
+  addTemplate:boolean=false;
   ref: DynamicDialogRef | undefined;
   ProductListDemo: any;
   showModal: boolean = false;
@@ -385,7 +357,6 @@ export class AppComponent implements OnInit {
 
   }
   private getInvalidStep() {
-   
     this.definition.sequence.forEach(seq => {
       var elements = document.querySelectorAll('.sqd-step-task') as NodeListOf<Element>;;
       var matchedElement: any = null;
@@ -409,10 +380,7 @@ export class AppComponent implements OnInit {
         }
       })
     });
-   
-
-
-   
+  
       // Check if the element has the data-step-id attribute
     //  if (element.hasAttribute('data-step-id')) {
         // Get the value of the data-step-id attribute
@@ -457,21 +425,9 @@ export class AppComponent implements OnInit {
     this.reflectChanges();
   }
 
-  onDragStart(event: any, content: string) {
-    event.dataTransfer.setData('text', content);
-  }
-
-  onEditorFocus(event: any) {
-    this.cursorPosition = event.target.selectionStart;
-  }
-
-  onEditorBlur(event: any) {
-    this.cursorPosition = null;
-  }
-
+ 
   reflectChanges() {
     this.cdr.detectChanges();
-
     // Optional: Trigger window resize event
     setTimeout(() => {
       window.dispatchEvent(new Event('resize'));
@@ -498,6 +454,6 @@ export class AppComponent implements OnInit {
     seq.properties['Hour'] = this.selectedHoursValue;
     seq.properties['RunBasedOn'] = this.selectedBasedOnValue;
     seq.properties['Minute'] = 0;
-    seq.properties['ScheduledTime'] = `${this.selectedDaysValue} Days ${this.selectedHoursValue} Hours ${this.selectedBasedOnValue}`
+    seq.properties['ScheduledTime'] = `${this.selectedDaysValue} Day${this.selectedDaysValue == 1 ? '' :'s'} ${this.selectedHoursValue} Hour${this.selectedHoursValue == 1 ? '' :'s'} ${this.selectedBasedOnValue}`
   }
 }

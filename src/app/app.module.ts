@@ -35,9 +35,10 @@ import {
   MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
+import { TemplateComponent } from './template/template.component';
 
 @NgModule({
-  declarations: [AppComponent, DateRollerComponent],
+  declarations: [AppComponent, DateRollerComponent, TemplateComponent],
   imports: [
     CommonModule,
     BrowserModule,

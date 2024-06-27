@@ -84,8 +84,6 @@
             " />
         </div>
       </div>
-      
-
       <div class="flex flex-row gap-3 mt-4">
         <span class="flex w-full flex-column">
           <span class="flex w-full flex-column gap-2">
@@ -124,7 +122,10 @@
         </span>
 
         <div class="w-full gap-2" [ngClass]="toggle ? 'hidden ':'flex flex-column'">
+         <div class="flex-row justify-content-between gap-2 flex">
           <label for="">Template</label>
+          <button (click)="addTemplate =true;" class="p-1 bg-blue-600 border-none border-round">+</button>
+         </div>
           <select class="p-inputtext-sm w-full" pInputText optionLabel="name"
             [value]="editor.step.properties.MailTemplateId" (input)="
           updateProperty(
@@ -165,20 +166,7 @@
             " />
         </div>
       </div>
-      <div class="container" [hidden]="!toggle">
-        <div class="text-black p-3" draggable="true" (dragstart)="onDragStart($event, '#Customer_Name#')">
-          #Customer_Name#
-        </div>
-        <div class="text-black p-3" draggable="true" (dragstart)="onDragStart($event, '#Invoice_Number#')">
-          #Invoice_Number#
-        </div>
-        <div class="text-black p-3" draggable="true" (dragstart)="onDragStart($event, '#Balance_Amount#')">
-          #Balance_Amount#
-        </div>
-        <h4>Custom Template Editor</h4>
-        <angular-editor [config]="config" (focus)="onEditorFocus($event)"
-          (blur)="onEditorBlur($event)"></angular-editor>
-      </div>
+     
       </p-dialog>
     </span>
 
@@ -261,8 +249,6 @@
     }}</textarea>
   </mat-form-field>
 </div>
-<!-- <p-dialog [visible]="true">
-  <span class="">
-   
-  </span>
-</p-dialog> -->
+<p-dialog [(visible)]="addTemplate">
+  <app-template></app-template>
+</p-dialog> 
